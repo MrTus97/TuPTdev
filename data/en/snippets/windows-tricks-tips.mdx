@@ -1,0 +1,31 @@
+---
+heading: 'All snippets in windows'
+title: 'All snippets in windows'
+date: '2024-07-12'
+type: 'Windows'
+draft: false
+summary: 'Some tip/trick in windows'
+tags: ['windows', 'registry']
+---
+
+## Disable/Enable show more button in windows11
+
+> You create file with extension is \*.**reg** and run any where in your computer. Restart to apply effect
+
+### Disable button show more option
+
+```reg:disable_show_more_button.reg
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32]
+@=""
+
+```
+
+### Enable button show more option
+
+```reg:enable_show_more_button.reg
+Windows Registry Editor Version 5.00
+
+[-HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}]
+```

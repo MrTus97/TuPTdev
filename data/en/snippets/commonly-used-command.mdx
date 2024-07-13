@@ -1,0 +1,29 @@
+---
+heading: 'Commonly used command'
+title: 'Commonly used command'
+date: '2024-07-12'
+type: 'Command'
+draft: false
+summary: 'Commands that I often use'
+tags: ['command', 'git', 'ssh','policy']
+---
+
+## Create SSH key for github
+
+> You need to install [Git](https://git-scm.com/downloads) before start
+
+```bash
+ssh-keygen -t ed25519 -C "your_email@example.com"
+```
+
+> Note: If you are using a legacy system that doesn't support the Ed25519 algorithm, use:
+
+```bash
+ssh-keygen -t rsa -b 4096 -C "your_email@example.com"
+```
+
+## Fix error 'ps1 cannot be loaded because running scripts is disabled on this system'
+
+```bash
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Unrestricted
+```

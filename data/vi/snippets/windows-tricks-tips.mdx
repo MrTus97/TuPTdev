@@ -1,0 +1,31 @@
+---
+heading: 'Snippets ở windows'
+title: 'Snippets ở windows'
+date: '2024-07-12'
+type: 'Windows'
+draft: false
+summary: 'Một vài tip/trick của windows'
+tags: ['windows', 'registry']
+---
+
+## Tắt/Bật tính năng show more option trong windows11
+
+> Tạo file với đuôi là \*.**reg** và chạy ở bất cứ đâu trên máy tính của bạn. Restart để nhận registry mới
+
+### Tắt tính năng show more option trong windows11
+
+```reg:disable_show_more_button.reg
+Windows Registry Editor Version 5.00
+
+[HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32]
+@=""
+
+```
+
+### Bật tính năng show more option trong windows11
+
+```reg:enable_show_more_button.reg
+Windows Registry Editor Version 5.00
+
+[-HKEY_CURRENT_USER\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}]
+```

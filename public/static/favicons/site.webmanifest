@@ -1,0 +1,36 @@
+{
+  "name": "TuPT",
+  "short_name": "TuPT",
+  "icons": [
+    {
+      "src": "/static/images/logoSquare.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/logoSquareSmall.png",
+      "sizes": "500x500",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "display": "standalone",
+  "start_url": "/",
+  "description": "An website from TuPT.dev",
+  "screenshots": [
+    {
+      "src": "/static/images/screenshot.png",
+      "sizes": "1115x709",
+      "type": "image/gif",
+      "form_factor": "wide",
+      "label": "Application"
+    },
+    {
+      "src": "/static/images/mobile.png",
+      "sizes": "390x583",
+      "type": "image/gif",
+      "label": "Application"
+    }
+  ]
+}
