@@ -4,10 +4,12 @@ import { siteMetadata } from '~/data/siteMetadata'
 import XIcon from '~/icons/x.svg'
 import type { SocialButtonsProps } from '~/types/components'
 import { Link } from './Link'
+import { useLocale } from '~/hooks/useLocale'
 
-export function SocialShareButtons({ postUrl, title, fileName }: SocialButtonsProps) {
+export function SocialShareButtons({ postUrl, title, fileName, type }: SocialButtonsProps) {
+  let [locale] = useLocale()
   let createEditOnGithubUrl = (fileName: string) =>
-    `${siteMetadata.siteRepo}/blob/main/data/blog/${fileName}`
+    `${siteMetadata.siteRepo}/blob/main/data/${locale.code}/${type}/${fileName}`
   let createDiscussionTwitterUrl = (postUrl: string) =>
     `https://twitter.com/search?q=${encodeURIComponent(postUrl)}`
 
@@ -38,7 +40,7 @@ export function SocialShareButtons({ postUrl, title, fileName }: SocialButtonsPr
         )}
       </div>
       <div className="flex items-center text-white">
-        {/* {SHARE_ON_TWITTER === 'TRUE' && (
+        {SHARE_ON_TWITTER === 'TRUE' && (
           <TwitterShareButton
             url={postUrl}
             title={title}
@@ -48,7 +50,7 @@ export function SocialShareButtons({ postUrl, title, fileName }: SocialButtonsPr
             <XIcon className="h-5 w-5" fill="#fff" viewBox="0 0 1200 1227" />
             <span className="ml-2.5 mr-1.5 font-extrabold text-white">Tweet</span>
           </TwitterShareButton>
-        )} */}
+        )}
         {SHARE_ON_FACEBOOK === 'TRUE' && (
           <FacebookShareButton
             url={postUrl}

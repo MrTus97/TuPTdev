@@ -26,6 +26,7 @@ export interface SocialButtonsProps {
   postUrl: string
   title: string
   fileName: string
+  type: string
 }
 
 export type TwemojiProps = {

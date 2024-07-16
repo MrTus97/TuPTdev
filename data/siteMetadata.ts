@@ -6,7 +6,7 @@ export let siteMetadata = {
   socialBanner: '/static/images/logo.jpg',
   email: 'mr.tus97@gmail.com',
   github: 'https://github.com/MrTus97',
-  x: 'https://x.com/MrTus1997',
+  x: 'https://x.com/TuPT9x',
   facebook: 'https://facebook.com/tupt9x',
   youtube: '#',
   linkedin: 'https://www.linkedin.com/in/tupt/',
@@ -16,12 +16,13 @@ export let siteMetadata = {
     plausibleDataDomain: '',
     simpleAnalytics: false, // true | false
     umamiWebsiteId: 'e6c01c0a-6412-4da9-b785-616a4328f922',
-    googleAnalyticsId: '', // e.g. UA-000000-2 or G-XXXXXXX
+    googleAnalyticsId: 'G-90SZTXD4NC', // e.g. UA-000000-2 or G-XXXXXXX
   },
   socialAccounts: {
     github: 'MrTus97',
     linkedin: 'tupt',
     facebook: 'tupt9x',
+    x: 'tupt9x',
   },
 }
 

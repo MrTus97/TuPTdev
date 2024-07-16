@@ -11,7 +11,7 @@ import { siteMetadata } from '~/data/siteMetadata'
 import type { PostLayoutProps } from '~/types/layout'
 
 function PostLayout(props: PostLayoutProps) {
-  let { frontMatter, authorDetails, page, children, commentConfig } = props
+  let { frontMatter, authorDetails, page, children, commentConfig, type } = props
   let { slug, fileName, date, title, tags, readingTime } = frontMatter
   let postUrl = `${siteMetadata.siteUrl}/blog/${slug}`
 
@@ -41,7 +41,7 @@ function PostLayout(props: PostLayoutProps) {
               <div className="prose prose-base md:prose-lg max-w-none pb-8 pt-10 dark:prose-dark">
                 {children}
               </div>
-              <SocialShareButtons postUrl={postUrl} title={title} fileName={fileName} />
+              <SocialShareButtons postUrl={postUrl} title={title} fileName={fileName} type={type} />
               <Comments frontMatter={frontMatter} config={commentConfig} />
             </div>
             <footer>
