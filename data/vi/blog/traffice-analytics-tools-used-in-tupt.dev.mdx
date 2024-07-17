@@ -1,0 +1,111 @@
+---
+title: 'Các tool phân tích lưu lượng truy cập được sử dụng tại TuPT.dev'
+date: '2024-07-17'
+tags: ['software', 'tool']
+draft: false
+summary: 'Sau đây tôi xin giới thiệu các website phân tích lưu lượng được sử dụng trong website tupt.dev'
+images: ['/static/images/blogs/traffic-tools.jpg']
+authors: ['default']
+---
+
+import Twemoji from './Twemoji.tsx'
+import UnsplashPhotoInfo from './UnsplashPhotoInfo.tsx'
+
+![thumbnail-image](/static/images/blogs/traffic-tools.jpg)
+
+<UnsplashPhotoInfo
+  photoURL="https://unsplash.com/photos/person-using-android-smartphone--UsJoNxLaNo"
+  author="Georgia de Lotz"
+/>
+
+## Dẫn nhập
+
+Sau đây tôi xin giới thiệu các website phân tích lưu lượng được sử dụng trong website tupt.dev
+
+### 1. [Umami](https://umami.is/)
+
+> Umami makes it easy to collect, analyze, and understand your data — so you can focus on **growth**.
+
+Trên trang chủ đã đề cập tới việc thu thập và phân tích dữ liệu một cách dễ dàng => Đúng là như vậy, nhìn vào giao diện bên dưới bạn sẽ thấy nó đơn giản như thế nào.
+
+![umami-tupt.dev](/static/images/blogs/umami-tupt.dev.jpg)
+
+Ngoài giao diện dễ nhìn ra về mặt cài đặt cũng cực kì đơn giản
+
+1. Tạo tài khoản [Umami](https://umami.is)
+2. Add website
+
+   - Name: Tên hiển thị (như hình trên là TuPTdev)
+   - Domain: Là tên miền website của bạn (không nhập http hay https)
+
+   ![umami-add-website](/static/images/blogs/umami-add-website.jpg)
+
+3. Chèn script vào website của bạn
+
+   ![umami-tracking-code](/static/images/blogs/umami-tracking-code.jpg)
+
+Như vậy là bạn đã cài xong umami cho website của bạn rồi. Bây giờ bạn có thể bấm vào **View** (như hình ở bước 3) để xem lưu lượng truy cập website của mình.
+
+Ngoài ra, nếu bạn muốn mọi người đều xem được lưu lượng website của mình thì có thể vào tab "Share URL" và chọn "Enable Share URL" nhé.
+
+> Umami có [tính phí](https://umami.is/pricing) khi lượng event của bạn vượt quá 10K/tháng. Nếu project của bạn có nhiều hơn số đó thì nên cân nhắc plan sử dụng cho phù hợp hoặc có thể tự build 1 umami riêng cho mình.
+
+### 2. [Google Analytics](https://analytics.google.com/)
+
+Google Analytics được đại đa số mọi người dùng lựa chọn bởi vì sự đầy đủ của nó như các chức năng đề cập bên dưới
+
+- Các chức năng cơ bản như: theo dõi lưu lượng truy cập, phân tích dữ liệu, báo cáo
+- Cá nhân hóa dữ liệu và giao diện
+  - Tạo các đối tượng người dùng để theo dõi hành vi của từng nhóm người dùng cụ thể.
+  - Thiết lập bảng điều khiển và báo cáo theo nhu cầu riêng.
+- Tích hợp công cụ
+  - Tích hợp với Google Ads, Google Search Console, Google Marketing Platform...
+  - Kết nối với các công cụ CRM, ESP, CMS...
+
+Để cài đặt được google analytics vào website của mình cần thực hiện các bước như sau
+
+1. Có tài khoản Google
+2. Tạo tài khoản Google Analytics
+
+   1. Tạo account (account có thể quản lý được nhiều website)
+
+      ![google-analytics-account-creation](/static/images/blogs/google-analytics-account-creation.jpg)
+
+   2. Tạo property: Chỉ là tạo tên hiển thị nên không cần phải lo lắng điểm này
+
+      ![google-analytics-property-creation](/static/images/blogs/google-analytics-property-creation.jpg)
+
+   3. Chọn lĩnh vực của bạn
+
+      ![google-analytics-business-details](/static/images/blogs/google-analytics-business-details.jpg)
+
+   4. Chọn mục mà bạn muốn quan tâm và đồng ý các điều khoản
+
+      ![google-analytics-business-objectives](/static/images/blogs/google-analytics-business-objectives.jpg)
+
+      ![google-analytics-policies](/static/images/blogs/google-analytics-policies.jpg)
+
+   5. Nhập website
+
+      ![google-analytics-data-collection](/static/images/blogs/google-analytics-data-collection.jpg)
+
+      ![google-analytics-create-website](/static/images/blogs/google-analytics-create-website.jpg)
+
+      ![google-analytics-script](/static/images/blogs/google-analytics-script.jpg)
+
+   6. Dùng script ở bước 5 bỏ vào website của bạn.
+
+Như vậy là bạn đã cài xong Google Analytics cho website của bạn rồi. Bây giờ bạn có thể bấm vào trang chủ để xem lưu lượng truy cập website của mình.
+![google-analytics-result](/static/images/blogs/google-analytics-result.jpg)
+
+## Kết bài
+
+Tùy theo nhu cầu sử dụng mà bạn có thể lựa chọn công cụ phân tích phù hợp như sau:
+
+- Đối với các website nhỏ với lượng truy cập chưa nhiều, Umami là một lựa chọn phù hợp do giao diện đơn giản và dễ sử dụng.
+
+- Đối với những website cần tích hợp với các công cụ khác hoặc có lượng truy cập lớn, Google Analytics là một công cụ mạnh mẽ với nhiều tính năng như tích hợp với các dịch vụ khác của Google và tùy chỉnh báo cáo chi tiết.
+
+Bạn có thể dựa vào các yêu cầu cụ thể của dự án để chọn công cụ phân tích phù hợp nhất.
+
+Happy coding <Twemoji emoji="clinking-beer-mugs" />
