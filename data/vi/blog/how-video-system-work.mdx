@@ -1,0 +1,66 @@
+---
+title: 'Cách tạo ra một hệ thống phát video tương tự Youtube'
+date: '2024-07-30'
+tags: ['howto', 'video-system', 'mini-project', 'feature']
+draft: false
+summary: 'Cùng tìm hiểu cách tạo ra hệ thống upload và phát video dưới dạng HLS'
+images: ['/static/images/blogs/video-system.jpg']
+authors: ['default']
+---
+
+import Twemoji from './Twemoji.tsx'
+import UnsplashPhotoInfo from './UnsplashPhotoInfo.tsx'
+
+![thumbnail-image](/static/images/blogs/video-system.jpg)
+
+<UnsplashPhotoInfo
+  photoURL="https://unsplash.com/photos/a-group-of-people-standing-around-a-display-of-video-screens-IayKLkmz6g0"
+  author="Maxim Hopman"
+/>
+
+## Dẫn nhập
+
+Có bao giờ các bạn thắc mắc là các hệ thống phát video trực tuyến (Youtube, Vimeo ..) hoạt động như thế nào chưa ?
+
+Hôm nay mình sẽ hướng dẫn các bạn tạo ra một hệ thống upload, convert và phát video trực tuyến.
+
+Hệ thống gồm:
+
+- NextJS: Upload video, phát video theo id
+- Flask: Lưu trữ video, cấp phát video tới client
+
+### 1. NextJS
+
+#### 1.1 Tạo Project [tại đây](https://nextjs.org/docs/getting-started/installation)
+
+Hệ thống phát sẽ có phần chức năng để người dùng có thể upload video của mình lên hệ thống của họ.
+
+Mình
+
+> Để hình ảnh video được lưu trữ trong hosting tại đây.
+
+### 2. Convert video
+
+Sau khi upload video lên thì hệ thống sẽ thực hiện những công đoạn convert video để tương thích với trình phát video của hệ thống.
+
+Trong phần demo thì mình sử dụng phần mềm ffmeg để demo cho các bạn
+
+Mô tả cách tải và cài đặt ffmeg (giải thích gpl-share và các loại còn lại khác nhau như thế nào)
+
+Hướng dẫn cách để trigeer khi có 1 video được upload lên thì sẽ chạy file .sh để có thể convert video thành file m3u8
+
+Giải thích về HLS và DASH, video bình thường có nhiều source thì như thế nào.
+
+### 3. Phát video
+
+Dùng VidStack để phát video với định dạng m3u8.
+
+Cần ví dụ để có thể khi chạy script sẽ tạo ra path có url khác nhau luôn.
+
+## Kết bài
+
+Qua bài này chúng ta đã khám phá sâu hơn về việc mã hóa mật khẩu, các loại tấn công phổ biến và cách chống lại chúng bằng cách sử dụng salt và stretching.
+
+Bên cạnh đó, chúng ta đã tìm hiểu về hàm băm bcrypt và cách các khái niệm này được áp dụng trong thực tế.
+
+Happy coding <Twemoji emoji="clinking-beer-mugs" />
