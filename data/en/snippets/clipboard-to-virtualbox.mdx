@@ -1,0 +1,53 @@
+---
+heading: 'Paste clipboard into virtualbox'
+title: 'Paste clipboard into virtualbox'
+date: '2024-07-22'
+type: 'Virtualbox'
+draft: false
+summary: 'Copy/paste clipboard into virtualbox and vice versa'
+tags: ['virtualbox', 'clipboard', 'setting']
+---
+
+## Download & install iso file
+
+```shell
+sudo apt-get install virtualbox-guest-additions-iso
+```
+
+If during the installation process there is an error as below
+
+```shell
+could not get lock /var/lib/dpkg/lock-frontend
+```
+
+Then execute the following series of commands
+
+```shell
+sudo killall apt apt-get
+
+sudo rm /var/lib/apt/lists/lock
+sudo rm /var/cache/apt/archives/lock
+sudo rm /var/lib/dpkg/lock*
+
+sudo dpkg --configure -a
+
+sudo apt update
+```
+
+## Mount file iso
+
+After downloading the iso file, mount it with ubuntu
+
+![image](https://user-images.githubusercontent.com/28853808/76238277-30025e00-6262-11ea-80a9-7ebf232a7e4e.png)
+
+![image](https://user-images.githubusercontent.com/28853808/76238412-67710a80-6262-11ea-83a7-50ecfee5e613.png)
+
+Enter your password if you have one, and select "Run"
+
+## Change copy setting
+
+> Device > Share Clipboard > Bidirectional
+
+![image](https://user-images.githubusercontent.com/28853808/76238580-a43d0180-6262-11ea-8f71-158c15b8058b.png)
+
+Restart the computer and enjoy the results.
