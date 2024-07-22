@@ -17,6 +17,7 @@ import Umami from '~/icons/umami.svg'
 import Vercel from '~/icons/vercel.svg'
 import Windows from '~/icons/windows.svg'
 import Command from '~/icons/command.svg'
+import Virtualbox from '~/icons/virtualbox.svg'
 
 export let BrandIconsMap = {
   React,
@@ -38,6 +39,7 @@ export let BrandIconsMap = {
   Railway,
   Windows,
   Command,
+  Virtualbox,
 }
 
 export function BrandIcon(props: { type: keyof typeof BrandIconsMap; className?: string }) {
