@@ -6,7 +6,7 @@ export function UmamiScript() {
     <Script
       async
       data-website-id={siteMetadata.analytics.umamiWebsiteId}
-      src="https://cloud.umami.is/script.js"
+      src="https://umami.tupt.dev/script.js"
     />
   )
 }

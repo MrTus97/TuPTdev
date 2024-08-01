@@ -11,11 +11,11 @@ export let siteMetadata = {
   youtube: '#',
   linkedin: 'https://www.linkedin.com/in/tupt/',
   locale: 'vi',
-  analyticsURL: 'https://cloud.umami.is/share/n4mu0QKnrlpiWH8X/tupt.dev',
+  analyticsURL: 'https://umami.tupt.dev/share/toCRym7jAFWa8Qwj/tupt.dev',
   analytics: {
     plausibleDataDomain: '',
     simpleAnalytics: false, // true | false
-    umamiWebsiteId: 'e6c01c0a-6412-4da9-b785-616a4328f922',
+    umamiWebsiteId: 'd101f2cd-91f5-4ca9-8a0c-f98420f170ab',
     googleAnalyticsId: 'G-90SZTXD4NC', // e.g. UA-000000-2 or G-XXXXXXX
   },
   socialAccounts: {
