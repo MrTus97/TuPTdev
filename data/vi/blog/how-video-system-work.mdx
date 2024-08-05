@@ -1,0 +1,635 @@
+---
+title: 'Cách tạo ra một hệ thống phát video sử dụng HLS'
+date: '2024-08-06'
+tags: ['howto', 'video-system', 'mini-project', 'feature']
+draft: false
+summary: 'Cùng tìm hiểu cách tạo ra hệ thống upload và phát video dưới dạng HLS'
+images: ['/static/images/blogs/video-system.jpg']
+authors: ['default']
+---
+
+import Twemoji from './Twemoji.tsx'
+import UnsplashPhotoInfo from './UnsplashPhotoInfo.tsx'
+
+![thumbnail-image](/static/images/blogs/video-system.jpg)
+
+<UnsplashPhotoInfo
+  photoURL="https://unsplash.com/photos/a-group-of-people-standing-around-a-display-of-video-screens-IayKLkmz6g0"
+  author="Maxim Hopman"
+/>
+
+## Dẫn nhập
+
+Có bao giờ các bạn thắc mắc là các hệ thống phát video trực tuyến (Youtube, Vimeo ..) hoạt động như thế nào chưa ?
+
+Hôm nay mình sẽ hướng dẫn các bạn tạo ra một hệ thống upload, convert và phát video trực tuyến.
+
+Hệ thống gồm:
+
+- Frontend - NextJS: Upload video, phát video theo id
+- Backend - Flask: Lưu trữ video, cấp phát video tới client
+
+### 1. NextJS
+
+#### 1.1 Tạo Project
+
+Để tạo project thì bạn có thể xem tại [hướng dẫn](https://nextjs.org/docs/getting-started/installation) tại trang chủ của Nextjs
+
+#### 1.2 Tạo page upload
+
+- Hiển thị form upload ban đầu.
+  - Giới hạn dung lượng file upload: 10MB
+  - Giới hạn định dạng file upload: Mp4
+- Có thể drag và drop video vào để upload
+- Nếu có lỗi trong quá trình upload thì sẽ dùng `react-toastify` để hiển thị lỗi và tự động đóng
+
+![next-upload-screen](/static/images/blogs/next-upload-screen.png)
+
+- Khi upload thì dùng `onUploadProgress` để kiểm tra tiến độ upload file và hiển thị lên màn hình.
+
+![next-upload-screen](/static/images/blogs/video-system-uploading.png)
+
+- Sau khi upload thành công thì sẽ hiển thị link để người dùng có thể xem được video của mình vừa upload lên.
+
+![next-upload-screen](/static/images/blogs/video-system-upload-success.png)
+
+- Code tham khảo:
+  
+```tsx
+import { useState, ChangeEvent, MouseEvent, DragEvent } from "react";
+import axios from "axios";
+import { useRouter } from "next/router";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const MAX_FILE_SIZE_MB = 300; // Limit size
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; // Convert MB to Byte
+
+export default function Upload() {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [videoPath, setVideoPath] = useState<string>("");
+  const [fileName, setFileName] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const router = useRouter();
+  const baseUrl = router.basePath;
+
+  const handleFileChange = (file: File) => {
+    if (file.type !== "video/mp4") {
+      toast.error("Only mp4 type is allowed", {
+        autoClose: 5000, // Auto closed after 5s
+      });
+      setSelectedFile(null);
+      setFileName(null);
+    } else if (file.size > MAX_FILE_SIZE_BYTES) {
+      toast.error(`File size exceeds ${MAX_FILE_SIZE_MB}MB`, {
+        autoClose: 5000, // Auto closed after 5s
+      });
+      setSelectedFile(null);
+      setFileName(null);
+    } else {
+      setSelectedFile(file);
+      setFileName(file.name);
+    }
+  };
+
+  const handleUploadFile = async () => {
+    if (!selectedFile) return;
+
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    const formData = new FormData();
+    formData.append("video", selectedFile);
+
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/upload`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          onUploadProgress: (event) => {
+            if (event.total) {
+              const percent = Math.round((event.loaded * 100) / event.total);
+              setUploadProgress(percent);
+            }
+          },
+        }
+      );
+
+      setVideoPath(`${baseUrl}/watch/${response.data.path}`);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      toast.error("Error uploading file", {
+        autoClose: 5000,
+      });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileDrop = (event: DragEvent<HTMLLabelElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.dataTransfer.files) {
+      handleFileChange(event.dataTransfer.files[0]);
+    }
+  };
+
+  const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleDragEnter = (event: DragEvent<HTMLLabelElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+  };
+
+  const handleRemove = () => {
+    setSelectedFile(null);
+    setFileName(null);
+    setUploadProgress(0);
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-6">
+      <h2 className="text-3xl font-bold mb-6">Upload Video</h2>
+      <div className="flex items-center justify-center w-full">
+        {!selectedFile ? (
+          <label
+            htmlFor="dropzone-file"
+            className={`flex flex-col items-center justify-center w-9/12 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 ${
+              isUploading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            onDrop={handleFileDrop}
+            onDragOver={handleDragOver}
+            onDragEnter={handleDragEnter}
+          >
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg
+                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 20 16"
+              >
+                <path
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                />
+              </svg>
+              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                <span className="font-semibold">Click to upload</span> or drag
+                and drop
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                MP4 Only
+              </p>
+            </div>
+            <input
+              id="dropzone-file"
+              type="file"
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files) {
+                  handleFileChange(e.target.files[0]);
+                }
+              }}
+              disabled={isUploading} // Disable input when uploading
+            />
+          </label>
+        ) : (
+          <div
+            className={`flex flex-col items-center justify-center w-9/12 h-64 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:bg-gray-700 p-4 ${
+              isUploading ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+          >
+            <p className="text-lg text-gray-700">Selected file: {fileName}</p>
+            <button
+              onClick={handleRemove}
+              className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              disabled={isUploading} // Disable remove button when uploading
+            >
+              Remove
+            </button>
+          </div>
+        )}
+      </div>
+      {selectedFile && !isUploading && (
+        <button
+          onClick={handleUploadFile}
+          className="mt-4 px-16 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Submit
+        </button>
+      )}
+      {isUploading && (
+        <div className="mt-4">
+          <p className="text-blue-500">Uploading: {uploadProgress}%</p>
+          <div className="relative pt-1">
+            <div className="flex mb-2 items-center justify-between">
+              <div className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-teal-600 bg-teal-200">
+                {uploadProgress}%
+              </div>
+            </div>
+            <div className="flex-1 bg-gray-200 rounded-full">
+              <div
+                className="leading-none py-1 text-xs text-center text-white bg-teal-500 rounded-full"
+                style={{ width: `${uploadProgress}%` }}
+              >
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {videoPath && (
+        <a
+          href={videoPath}
+          target="_blank"
+          className="mt-4 text-blue-500 underline hover:text-blue-700"
+        >
+          Go to view
+        </a>
+      )}
+      <ToastContainer />
+    </div>
+  );
+}
+```
+
+#### 1.3 Tạo page watch
+
+Tạo file `watch/[id].tsx` để thực hiện phát video. Dựa vào id để gọi tới server để nhận file `master.m3u8`
+
+Nếu có file `master.m3u8` thì có nghĩa video đã convert xong rồi, hệ thống sẽ cho bạn xem file dạng HLS. Còn nếu chưa thì hệ thống sẽ cho bạn xem video dạng mp4 (video gốc mà bạn upload lên). Dùng thư viện `Vidstack` để xem video.
+![Next-watch](/static/images/blogs/next-watch.png)
+
+Code tham khảo:
+
+```tsx
+// pages/watch/[id].tsx
+import "@vidstack/react/player/styles/base.css";
+import "@vidstack/react/player/styles/plyr/theme.css";
+import { MediaPlayer, MediaProvider } from "@vidstack/react";
+import {
+  PlyrLayout,
+  plyrLayoutIcons,
+} from "@vidstack/react/player/layouts/plyr";
+import { GetServerSideProps } from "next";
+import React from "react";
+
+interface VideoProps {
+  id: string;
+  videoUrl: string;
+}
+
+const WatchPage: React.FC<VideoProps> = ({ id, videoUrl }) => {
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+      <h1 className="text-4xl font-bold text-blue-600 mb-8">
+        Watching Video: {id}
+      </h1>
+      <div className="z-10 w-full max-w-5xl flex items-center justify-between font-mono text-sm lg:flex"></div>
+      <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6">
+        <MediaPlayer title={id} src={videoUrl}>
+          <MediaProvider />
+          <PlyrLayout
+            thumbnails="https://files.vidstack.io/sprite-fight/thumbnails.vtt"
+            icons={plyrLayoutIcons}
+          />
+        </MediaPlayer>
+      </div>
+    </div>
+  );
+};
+
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { id } = context.params!;
+
+  // Call server to get master of video
+  let videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/output/${id}/master.m3u8`;
+
+  try {
+    const response = await fetch(videoUrl);
+
+    if (response.status === 404) {
+      videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${id}`;
+    }
+  } catch (error) {
+    console.error("Error fetching video URL:", error);
+    videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${id}`;
+  }
+  return {
+    props: {
+      id,
+      videoUrl,
+    },
+  };
+};
+
+export default WatchPage;
+
+```
+
+### 2. Flask
+
+Sau khi upload video lên thì hệ thống sẽ thực hiện những công đoạn convert video sang định dạng HLS (HTTP Live Streaming). Mục đích của việc convert video sang dạng HLS
+
+- Streaming Linh Hoạt: HLS phân chia video thành các đoạn nhỏ (chunk) và cung cấp nhiều định dạng chất lượng khác nhau. Điều này cho phép người dùng có thể xem video với chất lượng phù hợp với tốc độ internet của họ, đảm bảo trải nghiệm xem mượt mà.
+
+- Tương Thích Rộng Rãi: HLS là một giao thức phổ biến được hỗ trợ bởi hầu hết các thiết bị và trình duyệt hiện đại, bao gồm cả iOS, Android, và các trình duyệt web.
+
+- Quản Lý Băng Thông Hiệu Quả: Bằng cách cung cấp nhiều định dạng chất lượng, HLS giúp tối ưu hóa việc sử dụng băng thông. Người xem có thể chuyển đổi giữa các định dạng chất lượng dựa trên điều kiện mạng hiện tại của họ.
+
+- Khả Năng Tăng Trưởng: HLS hỗ trợ việc phát trực tiếp (live streaming) và phát lại (on-demand streaming), giúp bạn có thể dễ dàng mở rộng quy mô từ một vài người xem lên hàng nghìn hoặc thậm chí hàng triệu người xem mà không ảnh hưởng đến chất lượng dịch vụ.
+
+- Tích Hợp Bảo Mật: HLS hỗ trợ các cơ chế bảo mật như mã hóa AES-128 và sử dụng các token để bảo vệ nội dung, giúp ngăn chặn việc truy cập trái phép và bảo vệ bản quyền nội dung.
+
+- Phát Trực Tiếp: Đối với các sự kiện phát trực tiếp, HLS giúp giảm độ trễ và cung cấp trải nghiệm xem liền mạch cho người dùng.
+
+Trong phần demo thì mình sử dụng `ffmpeg` để demo.
+
+### 2.1 Tải và cài đặt ffmpeg
+
+Link tải và cài đặt: [Tại đây](https://www.ffmpeg.org/download.html)
+
+Khi tải sẽ có các phiên bản `GPL` (General Public License) và `LGPL` (Lesser General Public License). Bạn nên lựa chọn đúng với nhu cầu và mục đích sử dụng của bạn
+
+- GPL Shared: Khi FFmpeg được xây dựng với tùy chọn "GPL shared", nghĩa là thư viện FFmpeg được biên dịch dưới giấy phép GPL và các thư viện chia sẻ (shared libraries) của nó cũng được cấp phép theo GPL. Giấy phép GPL yêu cầu rằng bất kỳ phần mềm nào sử dụng các thư viện này cũng phải được phát hành dưới GPL, nghĩa là mã nguồn phải được công khai và cấp phép tương tự.
+
+- GPL: Khi chỉ có "GPL" mà không có "shared", điều này vẫn có nghĩa rằng FFmpeg được biên dịch dưới giấy phép GPL, nhưng không nhất thiết phải sử dụng các thư viện chia sẻ.
+
+- LGPL Shared: Khi FFmpeg được xây dựng với tùy chọn "LGPL shared", nghĩa là thư viện FFmpeg được biên dịch dưới giấy phép LGPL và các thư viện chia sẻ của nó cũng được cấp phép theo LGPL. Giấy phép LGPL cho phép các phần mềm sử dụng các thư viện này có thể được phát hành dưới bất kỳ giấy phép nào (kể cả thương mại), miễn là các thay đổi đối với các thư viện LGPL được cung cấp lại dưới LGPL.
+
+- LGPL: Khi chỉ có "LGPL" mà không có "shared", điều này vẫn có nghĩa rằng FFmpeg được biên dịch dưới giấy phép LGPL, nhưng không nhất thiết phải sử dụng các thư viện chia sẻ.
+
+### 2.2 Tạo flask server
+
+#### 2.2.1 Chuẩn bị thư viện
+
+```txt
+Flask==3.0.3 # Webserver
+Flask-Cors==4.0.1 # CORS
+watchdog==4.0.1 # Watch folder
+```
+
+#### 2.2.2 Tạo các route cần thiết
+
+##### 2.2.2.1 Handle upload video
+
+```python
+@app.route('/upload', methods=['POST'])
+def upload_video():
+    """
+    Handle upload video (only mp4 type)
+    """
+
+    if 'video' not in request.files:
+        return jsonify({'error': 'No video file provided'}), 400
+
+    file = request.files['video']
+
+    # Random video file name from uuid (only mp4 type)
+    id_file = uuid.uuid4().hex
+    file_name = id_file + '.mp4'
+
+    # Save file with name generate before
+    file_path = os.path.join(UPLOAD_FOLDER, file_name)
+    file.save(file_path)
+
+    return jsonify({'path': f'{id_file}'})
+```
+
+##### 2.2.2.2 Phân phối video tới client (HLS)
+
+```python
+@app.route('/output/<id_video>/<video_file_name>')
+def serve_video(id_video: str, video_file_name: str):
+    """
+    Send video to client
+    """
+    return send_from_directory(OUTPUT_FOLDER + "/" + id_video, video_file_name)
+```
+
+##### 2.2.2.3 Phân phối video tới client (Video gốc)
+
+```python
+@app.route('/uploads/<id_video>')
+def serve_input(id_video: str):
+    return send_from_directory(UPLOAD_FOLDER, id_video + '.mp4')
+```
+
+##### 2.2.2.4 Watcher xử lý convert video khi có file mới được tạo trong folder upload
+
+```python
+class Watcher:
+    def __init__(self, path_to_watch, bat_file_path):
+        self.path_to_watch = path_to_watch
+        self.bat_file_path = bat_file_path
+        self.event_handler = FileSystemEventHandler()
+        self.observer = Observer()
+
+        self.event_handler.on_created = self.on_created
+        self.observer.schedule(
+            self.event_handler, self.path_to_watch, recursive=False)
+        self.observer.start()
+
+    def on_created(self, event):
+        if not event.is_directory:
+            if event.src_path:
+                print(f'File created: {event.src_path}')
+                self.run_bat_file(event.src_path)
+
+    def run_bat_file(self, new_file_path):
+        print(f'Running bat file: {self.bat_file_path}')
+        file_name_without_extension = self.get_file_name_without_extension(
+            new_file_path)
+        result = subprocess.run([self.bat_file_path, new_file_path, './output/',
+                                file_name_without_extension], capture_output=True, text=True, check=True)
+        output = result.stdout
+        if 'Convert Done' in output:
+            # TODO send email here
+            print('send email here')
+
+    def stop(self):
+        self.observer.stop()
+        self.observer.join()
+
+    def get_file_name_without_extension(self, file_path):
+        # Extract the file name from the path
+        file_name = os.path.basename(file_path)
+        # Split the file name and extension
+        name_without_extension = os.path.splitext(file_name)[0]
+        return name_without_extension
+
+
+def run_watcher():
+    path_to_watch = "./uploads/"
+    bat_file_path = "convert.bat"
+    watcher = Watcher(path_to_watch, bat_file_path)
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        watcher.stop()
+```
+
+#### 2.2.3 File bat convert video
+
+- File bat nhận 3 tham số: `input_file`, `output_directory`, `output_file_id`
+- Dựa vào `input_file` để lấy ra chiều rộng, cao của video
+- Dựa vào chiều cao để convert sang các độ phân giải khác nhau
+- Tạo file ``output_file_id`/master.m3u8` đại điện cho video
+- Code tham khảo
+
+```bat
+@echo off
+setlocal enabledelayedexpansion
+
+@REM Check if ffmpeg is installed
+where ffmpeg >nul 2>nul
+if %errorlevel% neq 0 (
+    echo ffmpeg is not installed. Please install ffmpeg before running this script.
+    exit /b 1
+)
+
+@REM Check if the number of parameters is at least 3.
+if "%~3"=="" (
+    echo Use: %0 ^<INPUT_FILE_file^> ^<OUTPUT_DIR^> ^<ouput_file_id^
+    exit /b 1
+)
+
+@REM For testing only bat
+@REM set VIDEO_FILE=./uploads/video.mp4
+@REM set OUTPUT=./output/
+@REM set OUTPUT_FILE_ID=34975345098
+
+@REM Assign param to variable
+set VIDEO_FILE=%1
+set OUTPUT=%2
+set OUTPUT_FILE_ID=%3
+
+set OUTPUT_DIR=%OUTPUT%%OUTPUT_FILE_ID%/
+
+@REM Create output directory
+if not exist "%OUTPUT_DIR%" (
+    mkdir "%OUTPUT_DIR%"
+)
+
+@REM Use PowerShell to get width and height of video 
+for /f "tokens=*" %%a in ('powershell -Command "(& { $width = (ffprobe -v error -select_streams v:0 -show_entries stream=width -of default=nw=1:nk=1 \"%VIDEO_FILE%\" ); $height = (ffprobe -v error -select_streams v:0 -show_entries stream=height -of default=nw=1:nk=1 \"%VIDEO_FILE%\" ); Write-Output \"$width`n$height\" })"') do (
+    if not defined width set "width=%%a"
+    if defined width set "height=%%a"
+)
+
+call :convert_video 1920:1080 5000k 192k 5350k 10000k
+call :convert_video 1280:720  2500k 128k 2675k 5000k
+call :convert_video 854:480 1000k 128k 1075k 2000k
+call :convert_video 640:360 800k 96k 875k 1600k
+
+@REM create master playlist
+echo #EXTM3U> %OUTPUT_DIR%master.m3u8
+if exist %OUTPUT_DIR%output_240p.m3u8 (
+    echo #EXT-X-STREAM-INF:BANDWIDTH=400000,RESOLUTION=426x240>> %OUTPUT_DIR%master.m3u8
+    echo output_240p.m3u8>> %OUTPUT_DIR%master.m3u8
+) 
+if exist %OUTPUT_DIR%output_240p.m3u8 (
+    echo #EXT-X-STREAM-INF:BANDWIDTH=400000,RESOLUTION=426x240>> %OUTPUT_DIR%master.m3u8
+    echo output_240p.m3u8>> %OUTPUT_DIR%master.m3u8
+)
+if exist %OUTPUT_DIR%output_360p.m3u8 (
+    echo #EXT-X-STREAM-INF:BANDWIDTH=800000,RESOLUTION=640x360>> %OUTPUT_DIR%master.m3u8
+    echo output_360p.m3u8>> %OUTPUT_DIR%master.m3u8
+)
+if exist %OUTPUT_DIR%output_480p.m3u8 (
+    echo #EXT-X-STREAM-INF:BANDWIDTH=1400000,RESOLUTION=854x480>> %OUTPUT_DIR%master.m3u8
+    echo output_480p.m3u8>> %OUTPUT_DIR%master.m3u8
+)
+if exist %OUTPUT_DIR%output_720p.m3u8 (
+    echo #EXT-X-STREAM-INF:BANDWIDTH=2675000,RESOLUTION=1280x720>> %OUTPUT_DIR%master.m3u8
+    echo output_720p.m3u8>> %OUTPUT_DIR%master.m3u8
+)
+if exist %OUTPUT_DIR%output_1080p.m3u8 (
+    echo #EXT-X-STREAM-INF:BANDWIDTH=4820000,RESOLUTION=1920x1080>> %OUTPUT_DIR%master.m3u8
+    echo output_1080p.m3u8>> %OUTPUT_DIR%master.m3u8
+)
+
+echo Convert Done
+EXIT /b
+
+:convert_video
+set resolution=%~1
+set bitrate_audio=%~2
+set bitrate=%~3
+set maxrate=%~4
+set buffersize=%~5
+
+for /f "tokens=1,2 delims=:" %%a in ("%resolution%") do (
+    set "widthConvert=%%a"
+    set "heightConvert=%%b"
+)
+set /a heightConvertInt=%heightConvert%
+
+@REM Check or condition (height video greater equal solution or height greater equal 1000) to convert
+if %height% GEQ 1000 set condition = True
+if %height% GEQ %heightConvertInt% set condition=True
+
+if "%condition%"=="True" (
+    ffmpeg -i %VIDEO_FILE% -vf "scale=%resolution%" -c:a aac -strict -2 -ar 48000 -b:a 128k -c:v h264 -profile:v main -crf 20 -sc_threshold 0 -g 48 -keyint_min 48 -hls_time 6 -hls_playlist_type vod -b:v %bitrate% -maxrate %maxrate% -bufsize %buffersize% -hls_segment_filename %OUTPUT_DIR%output_%heightConvert%p%%03d.ts %OUTPUT_DIR%output_%heightConvert%p.m3u8
+)
+exit /b
+
+```
+
+- Sau khi video convert sẽ có dạng như thế này
+
+![flask-video-after-convert](/static/images/blogs/flask-video-after-convert.png)
+
+#### 2.2.4 Tạo application
+
+```python
+if __name__ == '__main__':
+    watchdog_thread = threading.Thread(target=run_watcher)
+    watchdog_thread.daemon = True
+    watchdog_thread.start()
+
+    # Start flask with another thread
+    # Reloader must to be false because just main thread can use reloader.
+    flask_thread = threading.Thread(
+        target=lambda: app.run(debug=True, use_reloader=False))
+    flask_thread.daemon = True
+    flask_thread.start()
+
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        sys.exit(0)
+
+```
+
+## Kết bài
+
+Qua bài này chúng ta đã hiểu được cách để dựng lên một hệ thống phát video trực tuyến như thế nào.
+
+Ngoài ra chúng ta cũng biết cách dùng các thư viện
+
+- `Vidstack`: Trình phát video
+- `react-toastify`: Hiển thị toast
+- `watchdog`: Xem sự thay đổi của folder
+
+Trong bài viết chưa giải quyết được các vấn đề sau, nếu các bạn có giải pháp thì có thể để lại đóng góp dưới phần comment.
+
+- Logic `getServerSideProps` đang được xử lý tại frontend => Đáng lẽ chỉ gửi 1 request lên server, nếu link 404 thì server sẽ redirect về video gốc chứ không làm điều này ở client. Tuy nhiên, `Vidstack` lại không hỗ trợ redirect như vậy (phát video không chạy mặc dù truy cập trực tiếp có thể phát bình thường)
+
+- Chạy watchdog và flask cùng nhau thông qua threading. Mình không chắc liệu rằng sau khi `ctrl + c` thì các thread có kết thúc hay không. Nó có thể sẽ gây lãng phí bộ nhớ. Mặc dù mình đã thử chạy flask ở main thread và watchdog ở thead khác thì bị tình trạng file bat [chạy 2 lần](https://stackoverflow.com/questions/27640693/python-watchdog-runs-more-than-once) và khi dừng server thì bị lỗi [An operation was attempted on something that is not a socket](https://stackoverflow.com/questions/45355301/running-flask-raises-winerror-10038)
+
+Happy coding <Twemoji emoji="clinking-beer-mugs" />
