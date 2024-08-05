@@ -1,9 +1,9 @@
 ---
-title: 'Cách tạo ra một hệ thống phát video sử dụng HLS'
+title: 'How to Create a Video Streaming System Using HLS'
 date: '2024-08-06'
 tags: ['howto', 'video-system', 'mini-project', 'feature']
 draft: false
-summary: 'Cùng tìm hiểu cách tạo ra hệ thống upload và phát video dưới dạng HLS'
+summary: "Let's Explore How to Create a Video Upload and Streaming System Using HLS"
 images: ['/static/images/blogs/video-system.jpg']
 authors: ['default']
 ---
@@ -18,42 +18,42 @@ import UnsplashPhotoInfo from './UnsplashPhotoInfo.tsx'
   author="Maxim Hopman"
 />
 
-## Dẫn nhập
+## Introduction
 
-Có bao giờ các bạn thắc mắc là các hệ thống phát video trực tuyến (Youtube, Vimeo ..) hoạt động như thế nào chưa ?
+Have you ever wondered how online video streaming systems (like YouTube, Vimeo, etc.) work?
 
-Hôm nay mình sẽ hướng dẫn các bạn tạo ra một hệ thống upload, convert và phát video trực tuyến.
+Today, I will guide you on how to create a system for uploading, converting, and streaming videos online.
 
-Hệ thống gồm:
+The system includes:
 
-- Frontend - NextJS: Upload video, phát video theo id
-- Backend - Flask: Lưu trữ video, cấp phát video tới client
+- Frontend - NextJS: Upload video, play video by id
+- Backend - Flask: Store videos, stream videos to clients
 
 ### 1. NextJS
 
-#### 1.1 Tạo Project
+#### 1.1 Create Project
 
-Để tạo project thì bạn có thể xem tại [hướng dẫn](https://nextjs.org/docs/getting-started/installation) tại trang chủ của Nextjs
+To create a project, you can refer to the [guide](https://nextjs.org/docs/getting-started/installation) on the official Next.js website.
 
-#### 1.2 Tạo page upload
+#### 1.2 Create page upload
 
-- Hiển thị form upload ban đầu.
-  - Giới hạn dung lượng file upload: 10MB
-  - Giới hạn định dạng file upload: Mp4
-- Có thể drag và drop video vào để upload
-- Nếu có lỗi trong quá trình upload thì sẽ dùng `react-toastify` để hiển thị lỗi và tự động đóng
+- Display the initial upload form.
+  - File size limit for upload: 10MB
+  - File format limit for upload: Mp4
+- Allow drag and drop for video uploads
+- If there is an error during the upload process, use `react-toastify` to display the error and close it automatically
 
 ![next-upload-screen](/static/images/blogs/next-upload-screen.png)
 
-- Khi upload thì dùng `onUploadProgress` để kiểm tra tiến độ upload file và hiển thị lên màn hình.
+- When uploading, use `onUploadProgress` to monitor the file upload progress and display it on the screen.
 
 ![next-upload-screen](/static/images/blogs/video-system-uploading.png)
 
-- Sau khi upload thành công thì sẽ hiển thị link để người dùng có thể xem được video của mình vừa upload lên.
+- After a successful upload, display a link so the user can view their uploaded video.
 
 ![next-upload-screen](/static/images/blogs/video-system-upload-success.png)
 
-- Code tham khảo:
+- Reference code:
   
 ```tsx
 import { useState, ChangeEvent, MouseEvent, DragEvent } from "react";
@@ -264,14 +264,15 @@ export default function Upload() {
 }
 ```
 
-#### 1.3 Tạo page watch
+#### 1.3 Create page watch
 
-Tạo file `watch/[id].tsx` để thực hiện phát video. Dựa vào id để gọi tới server để nhận file `master.m3u8`
+Create the file `watch/[id].tsx` to play the video. Use the id to request the `master.m3u8` file from the server.
 
-Nếu có file `master.m3u8` thì có nghĩa video đã convert xong rồi, hệ thống sẽ cho bạn xem file dạng HLS. Còn nếu chưa thì hệ thống sẽ cho bạn xem video dạng mp4 (video gốc mà bạn upload lên). Dùng thư viện `Vidstack` để xem video.
+If the `master.m3u8` file exists, it means the video has been converted, and the system will let you watch the HLS format video. If not, the system will let you watch the original mp4 video that you uploaded. Use the `Vidstack` library to play the video.
+
 ![Next-watch](/static/images/blogs/next-watch.png)
 
-Code tham khảo:
+Reference code:
 
 ```tsx
 // pages/watch/[id].tsx
@@ -341,39 +342,39 @@ export default WatchPage;
 
 ### 2. Flask
 
-Sau khi upload video lên thì hệ thống sẽ thực hiện những công đoạn convert video sang định dạng HLS (HTTP Live Streaming). Mục đích của việc convert video sang dạng HLS
+After uploading the video, the system will convert the video to the HLS (HTTP Live Streaming) format. The purpose of converting the video to HLS is:
 
-- Streaming Linh Hoạt: HLS phân chia video thành các đoạn nhỏ (chunk) và cung cấp nhiều định dạng chất lượng khác nhau. Điều này cho phép người dùng có thể xem video với chất lượng phù hợp với tốc độ internet của họ, đảm bảo trải nghiệm xem mượt mà.
+- Flexible Streaming: HLS splits the video into small chunks and provides multiple quality formats. This allows users to watch the video with a quality that matches their internet speed, ensuring a smooth viewing experience.
 
-- Tương Thích Rộng Rãi: HLS là một giao thức phổ biến được hỗ trợ bởi hầu hết các thiết bị và trình duyệt hiện đại, bao gồm cả iOS, Android, và các trình duyệt web.
+- Wide Compatibility: HLS is a widely used protocol supported by most modern devices and browsers, including iOS, Android, and web browsers.
 
-- Quản Lý Băng Thông Hiệu Quả: Bằng cách cung cấp nhiều định dạng chất lượng, HLS giúp tối ưu hóa việc sử dụng băng thông. Người xem có thể chuyển đổi giữa các định dạng chất lượng dựa trên điều kiện mạng hiện tại của họ.
+- Efficient Bandwidth Management: By providing multiple quality formats, HLS helps optimize bandwidth usage. Viewers can switch between quality formats based on their current network conditions.
 
-- Khả Năng Tăng Trưởng: HLS hỗ trợ việc phát trực tiếp (live streaming) và phát lại (on-demand streaming), giúp bạn có thể dễ dàng mở rộng quy mô từ một vài người xem lên hàng nghìn hoặc thậm chí hàng triệu người xem mà không ảnh hưởng đến chất lượng dịch vụ.
+- Scalability: HLS supports both live streaming and on-demand streaming, allowing you to easily scale from a few viewers to thousands or even millions of viewers without affecting service quality.
 
-- Tích Hợp Bảo Mật: HLS hỗ trợ các cơ chế bảo mật như mã hóa AES-128 và sử dụng các token để bảo vệ nội dung, giúp ngăn chặn việc truy cập trái phép và bảo vệ bản quyền nội dung.
+- Integrated Security: HLS supports security mechanisms such as AES-128 encryption and token usage to protect content, preventing unauthorized access and protecting copyright.
 
-- Phát Trực Tiếp: Đối với các sự kiện phát trực tiếp, HLS giúp giảm độ trễ và cung cấp trải nghiệm xem liền mạch cho người dùng.
+- Live Streaming: For live events, HLS helps reduce latency and provides a seamless viewing experience for users.
 
-Trong phần demo thì mình sử dụng `ffmpeg` để demo.
+In the demo, I use `ffmpeg` to demonstrate.
 
-### 2.1 Tải và cài đặt ffmpeg
+### 2.1 Download and install ffmpeg
 
-Link tải và cài đặt: [Tại đây](https://www.ffmpeg.org/download.html)
+Download and install link: [Here](https://www.ffmpeg.org/download.html)
 
-Khi tải sẽ có các phiên bản `GPL` (General Public License) và `LGPL` (Lesser General Public License). Bạn nên lựa chọn đúng với nhu cầu và mục đích sử dụng của bạn
+When downloading, you will find versions under `GPL` (General Public License) and `LGPL` (Lesser General Public License). You should choose the one that fits your needs and usage purposes.
 
-- GPL Shared: Khi FFmpeg được xây dựng với tùy chọn "GPL shared", nghĩa là thư viện FFmpeg được biên dịch dưới giấy phép GPL và các thư viện chia sẻ (shared libraries) của nó cũng được cấp phép theo GPL. Giấy phép GPL yêu cầu rằng bất kỳ phần mềm nào sử dụng các thư viện này cũng phải được phát hành dưới GPL, nghĩa là mã nguồn phải được công khai và cấp phép tương tự.
+- GPL Shared: When FFmpeg is built with the "GPL shared" option, it means the FFmpeg library is compiled under the GPL license, and its shared libraries are also licensed under GPL. The GPL license requires that any software using these libraries must also be released under GPL, meaning the source code must be open and similarly licensed.
 
-- GPL: Khi chỉ có "GPL" mà không có "shared", điều này vẫn có nghĩa rằng FFmpeg được biên dịch dưới giấy phép GPL, nhưng không nhất thiết phải sử dụng các thư viện chia sẻ.
+- GPL: When it is just "GPL" without "shared," it still means that FFmpeg is compiled under the GPL license, but it does not necessarily use shared libraries.
 
-- LGPL Shared: Khi FFmpeg được xây dựng với tùy chọn "LGPL shared", nghĩa là thư viện FFmpeg được biên dịch dưới giấy phép LGPL và các thư viện chia sẻ của nó cũng được cấp phép theo LGPL. Giấy phép LGPL cho phép các phần mềm sử dụng các thư viện này có thể được phát hành dưới bất kỳ giấy phép nào (kể cả thương mại), miễn là các thay đổi đối với các thư viện LGPL được cung cấp lại dưới LGPL.
+- LGPL Shared: When FFmpeg is built with the "LGPL shared" option, it means the FFmpeg library is compiled under the LGPL license, and its shared libraries are also licensed under LGPL. The LGPL license allows software using these libraries to be released under any license (including commercial), provided that changes to the LGPL libraries are redistributed under LGPL.
 
-- LGPL: Khi chỉ có "LGPL" mà không có "shared", điều này vẫn có nghĩa rằng FFmpeg được biên dịch dưới giấy phép LGPL, nhưng không nhất thiết phải sử dụng các thư viện chia sẻ.
+- LGPL: When it is just "LGPL" without "shared," it still means that FFmpeg is compiled under the LGPL license, but it does not necessarily use shared libraries.
 
-### 2.2 Tạo flask server
+### 2.2 Create flask server
 
-#### 2.2.1 Chuẩn bị thư viện
+#### 2.2.1 Prepare library
 
 ```txt
 Flask==3.0.3 # Webserver
@@ -381,7 +382,7 @@ Flask-Cors==4.0.1 # CORS
 watchdog==4.0.1 # Watch folder
 ```
 
-#### 2.2.2 Tạo các route cần thiết
+#### 2.2.2 Create routes
 
 ##### 2.2.2.1 Handle upload video
 
@@ -408,7 +409,7 @@ def upload_video():
     return jsonify({'path': f'{id_file}'})
 ```
 
-##### 2.2.2.2 Phân phối video tới client (HLS)
+##### 2.2.2.2 Distributing Video to Clients (HLS)
 
 ```python
 @app.route('/output/<id_video>/<video_file_name>')
@@ -419,7 +420,7 @@ def serve_video(id_video: str, video_file_name: str):
     return send_from_directory(OUTPUT_FOLDER + "/" + id_video, video_file_name)
 ```
 
-##### 2.2.2.3 Phân phối video tới client (Video gốc)
+##### 2.2.2.3 Distributing video tới client (Original video)
 
 ```python
 @app.route('/uploads/<id_video>')
@@ -427,7 +428,7 @@ def serve_input(id_video: str):
     return send_from_directory(UPLOAD_FOLDER, id_video + '.mp4')
 ```
 
-##### 2.2.2.4 Watcher xử lý convert video khi có file mới được tạo trong folder upload
+##### 2.2.2.4 Watcher convert video when new file created in upload folder
 
 ```python
 class Watcher:
@@ -484,11 +485,11 @@ def run_watcher():
 
 #### 2.2.3 File bat convert video
 
-- File bat nhận 3 tham số: `input_file`, `output_directory`, `output_file_id`
-- Dựa vào `input_file` để lấy ra chiều rộng, cao của video
-- Dựa vào chiều cao để convert sang các độ phân giải khác nhau
-- Tạo file ``output_file_id`/master.m3u8` đại điện cho video
-- Code tham khảo
+- The batch file accepts 3 parameters: `input_file`, `output_directory`, `output_file_id`
+- Based on `input_file`, retrieve the width and height of the video
+- Based on the height, convert the video to various resolutions
+- Create the file `output_file_id/master.m3u8` representing the video
+- Reference code:
 
 ```bat
 @echo off
@@ -589,11 +590,11 @@ exit /b
 
 ```
 
-- Sau khi video convert sẽ có dạng như thế này
+- After the video is converted, it will look like this:
 
 ![flask-video-after-convert](/static/images/blogs/flask-video-after-convert.png)
 
-#### 2.2.4 Tạo application
+#### 2.2.4 Create application
 
 ```python
 if __name__ == '__main__':
@@ -616,20 +617,20 @@ if __name__ == '__main__':
 
 ```
 
-## Kết bài
+## Conclusion
 
-Qua bài này chúng ta đã hiểu được cách để dựng lên một hệ thống phát video trực tuyến như thế nào.
+Through this article, we have understood how to build an online video streaming system.
 
-Ngoài ra chúng ta cũng biết cách dùng các thư viện
+Additionally, we have learned how to use the following libraries:
 
-- `Vidstack`: Trình phát video
-- `react-toastify`: Hiển thị toast
-- `watchdog`: Xem sự thay đổi của folder
+- `Vidstack`: Video player
+- `react-toastify`: Display toast notifications
+- `watchdog`: Monitor folder changes
 
-Trong bài viết chưa giải quyết được các vấn đề sau, nếu các bạn có giải pháp thì có thể để lại đóng góp dưới phần comment.
+The article does not address the following issues. If you have solutions, feel free to leave your contributions in the comments.
 
-- Logic `getServerSideProps` đang được xử lý tại frontend => Đáng lẽ chỉ gửi 1 request lên server, nếu link 404 thì server sẽ redirect về video gốc chứ không làm điều này ở client. Tuy nhiên, `Vidstack` lại không hỗ trợ redirect như vậy (phát video không chạy mặc dù truy cập trực tiếp có thể phát bình thường)
+- The `getServerSideProps` logic is being handled on the frontend => Ideally, only one request should be sent to the server. If the link is 404, the server should redirect to the original video instead of handling this on the client side. However, `Vidstack` does not support such redirection (video playback does not work even though direct access works fine).
 
-- Chạy watchdog và flask cùng nhau thông qua threading. Mình không chắc liệu rằng sau khi `ctrl + c` thì các thread có kết thúc hay không. Nó có thể sẽ gây lãng phí bộ nhớ. Mặc dù mình đã thử chạy flask ở main thread và watchdog ở thead khác thì bị tình trạng file bat [chạy 2 lần](https://stackoverflow.com/questions/27640693/python-watchdog-runs-more-than-once) và khi dừng server thì bị lỗi [An operation was attempted on something that is not a socket](https://stackoverflow.com/questions/45355301/running-flask-raises-winerror-10038)
+- Running `watchdog` and `flask` together via threading. I am not sure if threads terminate properly after `ctrl + c`. This could potentially cause memory waste. Even though I tried running Flask in the main thread and `watchdog` in another thread, I encountered issues such as the batch file [running twice](https://stackoverflow.com/questions/27640693/python-watchdog-runs-more-than-once) and an error [An operation was attempted on something that is not a socket](https://stackoverflow.com/questions/45355301/running-flask-raises-winerror-10038) when stopping the server.
 
 Happy coding <Twemoji emoji="clinking-beer-mugs" />
