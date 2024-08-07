@@ -38,7 +38,7 @@ Hệ thống gồm:
 #### 1.2 Tạo page upload
 
 - Hiển thị form upload ban đầu.
-  - Giới hạn dung lượng file upload: 10MB
+  - Giới hạn dung lượng file upload: 300MB
   - Giới hạn định dạng file upload: Mp4
 - Có thể drag và drop video vào để upload
 - Nếu có lỗi trong quá trình upload thì sẽ dùng `react-toastify` để hiển thị lỗi và tự động đóng
@@ -54,105 +54,101 @@ Hệ thống gồm:
 ![next-upload-screen](/static/images/blogs/video-system-upload-success.png)
 
 - Code tham khảo:
-  
-```tsx
-import { useState, ChangeEvent, MouseEvent, DragEvent } from "react";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
-const MAX_FILE_SIZE_MB = 300; // Limit size
-const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024; // Convert MB to Byte
+```tsx
+import { useState, ChangeEvent, MouseEvent, DragEvent } from 'react'
+import axios from 'axios'
+import { useRouter } from 'next/router'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+
+const MAX_FILE_SIZE_MB = 300 // Limit size
+const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024 // Convert MB to Byte
 
 export default function Upload() {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [videoPath, setVideoPath] = useState<string>("");
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [isUploading, setIsUploading] = useState<boolean>(false);
-  const router = useRouter();
-  const baseUrl = router.basePath;
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [videoPath, setVideoPath] = useState<string>('')
+  const [fileName, setFileName] = useState<string | null>(null)
+  const [uploadProgress, setUploadProgress] = useState<number>(0)
+  const [isUploading, setIsUploading] = useState<boolean>(false)
+  const router = useRouter()
+  const baseUrl = router.basePath
 
   const handleFileChange = (file: File) => {
-    if (file.type !== "video/mp4") {
-      toast.error("Only mp4 type is allowed", {
+    if (file.type !== 'video/mp4') {
+      toast.error('Only mp4 type is allowed', {
         autoClose: 5000, // Auto closed after 5s
-      });
-      setSelectedFile(null);
-      setFileName(null);
+      })
+      setSelectedFile(null)
+      setFileName(null)
     } else if (file.size > MAX_FILE_SIZE_BYTES) {
       toast.error(`File size exceeds ${MAX_FILE_SIZE_MB}MB`, {
         autoClose: 5000, // Auto closed after 5s
-      });
-      setSelectedFile(null);
-      setFileName(null);
+      })
+      setSelectedFile(null)
+      setFileName(null)
     } else {
-      setSelectedFile(file);
-      setFileName(file.name);
+      setSelectedFile(file)
+      setFileName(file.name)
     }
-  };
+  }
 
   const handleUploadFile = async () => {
-    if (!selectedFile) return;
+    if (!selectedFile) return
 
-    setIsUploading(true);
-    setUploadProgress(0);
+    setIsUploading(true)
+    setUploadProgress(0)
 
-    const formData = new FormData();
-    formData.append("video", selectedFile);
+    const formData = new FormData()
+    formData.append('video', selectedFile)
 
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/upload`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          onUploadProgress: (event) => {
-            if (event.total) {
-              const percent = Math.round((event.loaded * 100) / event.total);
-              setUploadProgress(percent);
-            }
-          },
-        }
-      );
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        onUploadProgress: (event) => {
+          if (event.total) {
+            const percent = Math.round((event.loaded * 100) / event.total)
+            setUploadProgress(percent)
+          }
+        },
+      })
 
-      setVideoPath(`${baseUrl}/watch/${response.data.path}`);
+      setVideoPath(`${baseUrl}/watch/${response.data.path}`)
     } catch (error) {
-      console.error("Error uploading file:", error);
-      toast.error("Error uploading file", {
+      console.error('Error uploading file:', error)
+      toast.error('Error uploading file', {
         autoClose: 5000,
-      });
+      })
     } finally {
-      setIsUploading(false);
+      setIsUploading(false)
     }
-  };
+  }
 
   const handleFileDrop = (event: DragEvent<HTMLLabelElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
+    event.preventDefault()
+    event.stopPropagation()
     if (event.dataTransfer.files) {
-      handleFileChange(event.dataTransfer.files[0]);
+      handleFileChange(event.dataTransfer.files[0])
     }
-  };
+  }
 
   const handleDragOver = (event: DragEvent<HTMLLabelElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
+    event.preventDefault()
+    event.stopPropagation()
+  }
 
   const handleDragEnter = (event: DragEvent<HTMLLabelElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-  };
+    event.preventDefault()
+    event.stopPropagation()
+  }
 
   const handleRemove = () => {
-    setSelectedFile(null);
-    setFileName(null);
-    setUploadProgress(0);
-  };
+    setSelectedFile(null)
+    setFileName(null)
+    setUploadProgress(0)
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 py-6">
@@ -162,7 +158,7 @@ export default function Upload() {
           <label
             htmlFor="dropzone-file"
             className={`flex flex-col items-center justify-center w-9/12 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 ${
-              isUploading ? "opacity-50 cursor-not-allowed" : ""
+              isUploading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
             onDrop={handleFileDrop}
             onDragOver={handleDragOver}
@@ -185,12 +181,9 @@ export default function Upload() {
                 />
               </svg>
               <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                <span className="font-semibold">Click to upload</span> or drag
-                and drop
+                <span className="font-semibold">Click to upload</span> or drag and drop
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
-                MP4 Only
-              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">MP4 Only</p>
             </div>
             <input
               id="dropzone-file"
@@ -198,7 +191,7 @@ export default function Upload() {
               className="hidden"
               onChange={(e) => {
                 if (e.target.files) {
-                  handleFileChange(e.target.files[0]);
+                  handleFileChange(e.target.files[0])
                 }
               }}
               disabled={isUploading} // Disable input when uploading
@@ -207,7 +200,7 @@ export default function Upload() {
         ) : (
           <div
             className={`flex flex-col items-center justify-center w-9/12 h-64 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:bg-gray-700 p-4 ${
-              isUploading ? "opacity-50 cursor-not-allowed" : ""
+              isUploading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
             <p className="text-lg text-gray-700">Selected file: {fileName}</p>
@@ -260,7 +253,7 @@ export default function Upload() {
       )}
       <ToastContainer />
     </div>
-  );
+  )
 }
 ```
 
@@ -275,27 +268,22 @@ Code tham khảo:
 
 ```tsx
 // pages/watch/[id].tsx
-import "@vidstack/react/player/styles/base.css";
-import "@vidstack/react/player/styles/plyr/theme.css";
-import { MediaPlayer, MediaProvider } from "@vidstack/react";
-import {
-  PlyrLayout,
-  plyrLayoutIcons,
-} from "@vidstack/react/player/layouts/plyr";
-import { GetServerSideProps } from "next";
-import React from "react";
+import '@vidstack/react/player/styles/base.css'
+import '@vidstack/react/player/styles/plyr/theme.css'
+import { MediaPlayer, MediaProvider } from '@vidstack/react'
+import { PlyrLayout, plyrLayoutIcons } from '@vidstack/react/player/layouts/plyr'
+import { GetServerSideProps } from 'next'
+import React from 'react'
 
 interface VideoProps {
-  id: string;
-  videoUrl: string;
+  id: string
+  videoUrl: string
 }
 
 const WatchPage: React.FC<VideoProps> = ({ id, videoUrl }) => {
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
-      <h1 className="text-4xl font-bold text-blue-600 mb-8">
-        Watching Video: {id}
-      </h1>
+      <h1 className="text-4xl font-bold text-blue-600 mb-8">Watching Video: {id}</h1>
       <div className="z-10 w-full max-w-5xl flex items-center justify-between font-mono text-sm lg:flex"></div>
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-lg p-6">
         <MediaPlayer title={id} src={videoUrl}>
@@ -307,36 +295,34 @@ const WatchPage: React.FC<VideoProps> = ({ id, videoUrl }) => {
         </MediaPlayer>
       </div>
     </div>
-  );
-};
-
+  )
+}
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.params!;
+  const { id } = context.params!
 
   // Call server to get master of video
-  let videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/output/${id}/master.m3u8`;
+  let videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/output/${id}/master.m3u8`
 
   try {
-    const response = await fetch(videoUrl);
+    const response = await fetch(videoUrl)
 
     if (response.status === 404) {
-      videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${id}`;
+      videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${id}`
     }
   } catch (error) {
-    console.error("Error fetching video URL:", error);
-    videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${id}`;
+    console.error('Error fetching video URL:', error)
+    videoUrl = `${process.env.NEXT_PUBLIC_API_URL}/uploads/${id}`
   }
   return {
     props: {
       id,
       videoUrl,
     },
-  };
-};
+  }
+}
 
-export default WatchPage;
-
+export default WatchPage
 ```
 
 ### 2. Flask
@@ -524,7 +510,7 @@ if not exist "%OUTPUT_DIR%" (
     mkdir "%OUTPUT_DIR%"
 )
 
-@REM Use PowerShell to get width and height of video 
+@REM Use PowerShell to get width and height of video
 for /f "tokens=*" %%a in ('powershell -Command "(& { $width = (ffprobe -v error -select_streams v:0 -show_entries stream=width -of default=nw=1:nk=1 \"%VIDEO_FILE%\" ); $height = (ffprobe -v error -select_streams v:0 -show_entries stream=height -of default=nw=1:nk=1 \"%VIDEO_FILE%\" ); Write-Output \"$width`n$height\" })"') do (
     if not defined width set "width=%%a"
     if defined width set "height=%%a"
@@ -540,7 +526,7 @@ echo #EXTM3U> %OUTPUT_DIR%master.m3u8
 if exist %OUTPUT_DIR%output_240p.m3u8 (
     echo #EXT-X-STREAM-INF:BANDWIDTH=400000,RESOLUTION=426x240>> %OUTPUT_DIR%master.m3u8
     echo output_240p.m3u8>> %OUTPUT_DIR%master.m3u8
-) 
+)
 if exist %OUTPUT_DIR%output_240p.m3u8 (
     echo #EXT-X-STREAM-INF:BANDWIDTH=400000,RESOLUTION=426x240>> %OUTPUT_DIR%master.m3u8
     echo output_240p.m3u8>> %OUTPUT_DIR%master.m3u8

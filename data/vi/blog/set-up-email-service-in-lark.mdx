@@ -1,0 +1,91 @@
+---
+title: 'Cài đặt email service với Lark'
+date: '2024-08-07'
+tags: ['howto', 'lark', 'service']
+draft: false
+summary: 'Hướng dẫn cài đặt email service miễn phí bằng Lark'
+images: ['/static/images/blogs/set-up-email-service-in-lark.jpg']
+authors: ['default']
+---
+
+import Twemoji from './Twemoji.tsx'
+import UnsplashPhotoInfo from './UnsplashPhotoInfo.tsx'
+
+![thumbnail-image](/static/images/blogs/set-up-email-service-in-lark.jpg)
+
+<UnsplashPhotoInfo
+  photoURL="https://unsplash.com/photos/a-white-square-with-a-red-circle-on-top-of-it-7rMD7zh5SKo"
+  author="Philip Oroni"
+/>
+
+## Dẫn nhập
+
+Khi nói tới email thì thường mọi người sẽ nghĩ ngay tới Gmail. Mỗi lần đăng kí hay làm một thứ gì đó liên quan tới mail mọi người đều chọn đăng kí với Gmail. Tuy nhiên vì nhu cầu nhiều nên việc tạo mới email ngày càng khó khăn.
+Hôm nay mình sẽ hướng dẫn các bạn tạo một email service miễn phí với Lark.
+
+### 1. Chuẩn bị
+
+Để thực hiện được thì bạn cần phải chuẩn bị `tên miền` và `email` cá nhân.
+
+- `Email` để bạn đăng kí sử dụng `Lark`
+- `Tên miền` để bạn đăng kí sử dụng `email service của Lark`
+
+### 2. Tạo tài khoản sử dụng Lark
+
+#### 2.1 Đăng kí tài khoản
+
+Link đăng kí [tại đây](https://www.larksuite.com/global/register?redirect_uri=https%3A%2F%2Fwww.larksuite.com%2Fdownload&registration_process=global_register&app_id=1001)
+![Lark-register-account](/static/images/blogs/lark-register-account.png)
+
+#### 2.2 Tạo tổ chức
+
+Lúc chọn `size` nên chọn từ `1-50` để được dùng free của Lark
+![lark-create-your-organization](/static/images/blogs/lark-create-your-organization.png)
+
+#### 2.3 Thiết lập domain name khi dùng Lark
+
+Khi tạo xong tài khoản, bạn vào phần [Lark Admin Console](https://www.larksuite.com/admin) để thiết lập lại domain name của Lark cho dễ nhớ để truy cập.
+![lark-setting-domain-name](/static/images/blogs/lark-setting-domain-name.png)
+
+### 3. Thiết lập mail domain
+
+#### 3.1 Cài đặt Lark Mail
+
+Truy cập the [Lark Admin Console](https://www.larksuite.com/admin) và click `Product Settings` > `Mail`.
+![lark-access-mail](/static/images/blogs/lark-access-mail.png)
+
+![lark-mail-set-up-now](/static/images/blogs/lark-mail-set-up-now.png)
+
+#### 3.2 Thiết lập email
+
+Nhập domain của bạn đã chuẩn bị vào và chọn `only enable email`
+![lark-configure-domain](/static/images/blogs/lark-configure-domain.png)
+![lark-mail-setting-only-enable-email](/static/images/blogs/lark-mail-setting-only-enable-email.png)
+
+#### 3.3 Thiết lập domain mail
+
+Thiết định các thông tin dns của Lark sang domain dns và check cho đến khi trạng thái là `verify` như hình bên dưới.
+
+![lark-mail-domain-dns](/static/images/blogs/lark-mail-domain-dns.png)
+
+Giả sử như mình đang dùng domain của hostinger thì mình vào `DNS / Nameservers` để thiết định
+![hostinger-dns-config](/static/images/blogs/hostinger-dns-config.png)
+
+### 3.4 Thiết lập email business cho supper user
+
+![lark-mail-configure-business-email](/static/images/blogs/lark-mail-configure-business-email.png)
+
+![lark-mail-supper-user](/static/images/blogs/lark-mail-supper-user.png)
+
+### 4. Tạo mail và sử dụng
+
+Truy cập `Organization` > `Member and Department` tại [Lark Admin Console](https://www.larksuite.com/admin) để tạo user và gán email cho user.
+![lark-mail-assign-mail-to-member](/static/images/blogs/lark-mail-assign-mail-to-member.png)
+
+## Kết bài
+
+Với các bước như trên, mình đã có thể tạo được một `email service` để dùng.
+
+Hiện tại (2024-08-07) Lark đang cho dùng thử miễn phí lên tới 50 account (tương ứng với 50 email). Với chừng ấy email, bạn đã có thể thoải mái dùng cho mục đích test rồi.
+
+Happy coding <Twemoji emoji="clinking-beer-mugs" />
