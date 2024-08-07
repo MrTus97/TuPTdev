@@ -1,0 +1,91 @@
+---
+title: 'Set up email service in Lark'
+date: '2024-08-07'
+tags: ['howto', 'lark', 'service']
+draft: false
+summary: 'How to set up email service in Lark free'
+images: ['/static/images/blogs/set-up-email-service-in-lark.jpg']
+authors: ['default']
+---
+
+import Twemoji from './Twemoji.tsx'
+import UnsplashPhotoInfo from './UnsplashPhotoInfo.tsx'
+
+![thumbnail-image](/static/images/blogs/set-up-email-service-in-lark.jpg)
+
+<UnsplashPhotoInfo
+  photoURL="https://unsplash.com/photos/a-white-square-with-a-red-circle-on-top-of-it-7rMD7zh5SKo"
+  author="Philip Oroni"
+/>
+
+## Introduction
+
+When it comes to email, people usually think of Gmail. Whenever someone needs to sign up or do something related to email, they typically choose to register with Gmail. However, due to the high demand, creating a new email account has become increasingly difficult.
+Today, I will guide you on how to create a free email service with Lark.
+
+### 1. Prepare
+
+To do this, you need to prepare a `domain name` and a `personal email`.
+
+- `Email` for registering to use `Lark`
+- `Domain name` for registering to use `Lark's email service`
+
+### 2. Create Lark account
+
+#### 2.1 Create account
+
+Link to register [here](https://www.larksuite.com/global/register?redirect_uri=https%3A%2F%2Fwww.larksuite.com%2Fdownload&registration_process=global_register&app_id=1001)
+![Lark-register-account](/static/images/blogs/lark-register-account.png)
+
+#### 2.2 Create organization
+
+When selecting the `size`, you should choose `1-50` to use Lark's free service.
+![lark-create-your-organization](/static/images/blogs/lark-create-your-organization.png)
+
+#### 2.3 Setting up the domain name when using Lark
+
+After creating an account, go to the [Lark Admin Console](https://www.larksuite.com/admin) to set up your Lark domain name for easier access.
+![lark-setting-domain-name](/static/images/blogs/lark-setting-domain-name.png)
+
+### 3. Setting up the mail domain
+
+#### 3.1 Installing Lark Mail
+
+Access the [Lark Admin Console](https://www.larksuite.com/admin) and click `Product Settings` > `Mail`.
+![lark-access-mail](/static/images/blogs/lark-access-mail.png)
+
+![lark-mail-set-up-now](/static/images/blogs/lark-mail-set-up-now.png)
+
+#### 3.2 Configuring the email
+
+Enter the domain you have prepared and select `only enable email`.
+![lark-configure-domain](/static/images/blogs/lark-configure-domain.png)
+![lark-mail-setting-only-enable-email](/static/images/blogs/lark-mail-setting-only-enable-email.png)
+
+#### 3.3 Setting up the mail domain
+
+Configure Lark's DNS information to your domain DNS and check until the status is `verified` as shown below.
+
+![lark-mail-domain-dns](/static/images/blogs/lark-mail-domain-dns.png)
+
+For example, if you are using a domain from Hostinger, go to `DNS / Nameservers` to configure it.
+![hostinger-dns-config](/static/images/blogs/hostinger-dns-config.png)
+
+### 3.4 Setting up a business email for the super user
+
+![lark-mail-configure-business-email](/static/images/blogs/lark-mail-configure-business-email.png)
+
+![lark-mail-supper-user](/static/images/blogs/lark-mail-supper-user.png)
+
+### 4. Creating and Using Email
+
+Access `Organization` > `Member and Department` in the [Lark Admin Console](https://www.larksuite.com/admin) to create users and assign email addresses to them.
+![lark-mail-assign-mail-to-member](/static/images/blogs/lark-mail-assign-mail-to-member.png)
+
+## Conclusion
+
+By following these steps, you can create an `email service` for use.
+
+As of (2024-08-07), Lark offers a free trial for up to 50 accounts (corresponding to 50 emails). With that many emails, you can comfortably use them for testing purposes.
+
+Happy coding <Twemoji emoji="clinking-beer-mugs" />
