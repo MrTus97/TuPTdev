@@ -16,6 +16,11 @@ function App({ Component, pageProps }) {
     // @ts-ignore
     <ThemeProvider attribute="class">
       <Head>
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1313803833871171"
+          crossOrigin="anonymous"
+        ></script>
         <meta content="width=device-width, initial-scale=1" name="viewport" />
       </Head>
       <Analytics />
