@@ -2,8 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import { requireAdminApi } from '~/libs/admin/auth.server'
 import { TranslationError, translateToEnglish } from '~/libs/admin/translate.server'
 
-// Long posts can take a few minutes to translate
-export const config = { api: { bodyParser: { sizeLimit: '2mb' } }, maxDuration: 300 }
+// Vercel Hobby allows at most 60s per function; the editor sends long posts in several parts
+export const config = { api: { bodyParser: { sizeLimit: '2mb' } }, maxDuration: 60 }
 
 /** POST { title, heading, summary, body } in Vietnamese -> the same shape in English */
 export default async function translate(req: NextApiRequest, res: NextApiResponse) {

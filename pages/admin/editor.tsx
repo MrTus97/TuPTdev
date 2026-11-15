@@ -7,6 +7,7 @@ import { AdminShell, Button, LoginScreen } from '~/components/admin/AdminShell'
 import { BrandIcon, BrandIconsMap } from '~/components/BrandIcon'
 import { MdxPreview } from '~/components/admin/MdxPreview'
 import { uploadImage, type UploadedImage } from '~/components/admin/image-upload'
+import { joinTranslated, splitForTranslation } from '~/libs/admin/chunk'
 import { serializeMdx, slugify } from '~/libs/admin/frontmatter'
 import { getAdminPageProps, type AdminPageProps } from '~/libs/admin/page.server'
 import {
@@ -252,19 +253,40 @@ export default function AdminEditor({ login, localMode }: AdminPageProps) {
     )
       return
     setBusy('translate')
-    setNotice({ type: 'ok', text: 'Đang dịch bằng AI… bài dài có thể mất 1–2 phút.' })
+    // Each request must finish within Vercel's 60s limit, so long bodies go in parts
+    let parts = splitForTranslation(vi.body)
+    let translated: string[] = []
+    let meta = { title: '', heading: '', summary: '' }
     try {
-      let res = await fetch('/api/admin/translate/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(vi),
-      })
-      let data = await res.json()
-      if (!res.ok) throw new Error(data.message)
-      setTexts((t) => ({
-        ...t,
-        en: { title: data.title, heading: data.heading, summary: data.summary, body: data.body },
-      }))
+      for (let [i, part] of parts.entries()) {
+        setNotice({
+          type: 'ok',
+          text:
+            parts.length > 1
+              ? `Đang dịch bằng AI… phần ${i + 1}/${parts.length}`
+              : 'Đang dịch bằng AI…',
+        })
+        let first = i === 0
+        let res = await fetch('/api/admin/translate/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: first ? vi.title : '',
+            heading: first ? vi.heading : '',
+            summary: first ? vi.summary : '',
+            body: part,
+          }),
+        })
+        let data = await res.json().catch(() => ({ message: `Lỗi máy chủ (${res.status})` }))
+        if (!res.ok) {
+          throw new Error(
+            parts.length > 1 ? `Phần ${i + 1}/${parts.length}: ${data.message}` : data.message
+          )
+        }
+        if (first) meta = { title: data.title, heading: data.heading, summary: data.summary }
+        translated.push(data.body)
+      }
+      setTexts((t) => ({ ...t, en: { ...meta, body: joinTranslated(translated) } }))
       setDirty(true)
       setTab('en')
       setEditorVersion((v) => v + 1)
