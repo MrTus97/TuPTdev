@@ -17,10 +17,18 @@ module.exports = withBundleAnalyzer({
   i18n,
   trailingSlash: true,
   experimental: {
-    // The admin preview bundles MDX at runtime: ship the components it can import and esbuild
+    // The admin preview bundles MDX at runtime with esbuild, so the function needs the
+    // components posts import, what they import through the `~/` alias, and tsconfig.json
+    // (where esbuild reads that alias from)
     outputFileTracingIncludes: {
       '/api/admin/preview': [
+        './tsconfig.json',
         './components/**/*',
+        './utils/**/*',
+        './constant/**/*',
+        './types/**/*',
+        './hooks/**/*',
+        './data/*.ts',
         './node_modules/esbuild/**/*',
         './node_modules/@esbuild/**/*',
       ],
