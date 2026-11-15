@@ -1,7 +1,7 @@
 export let siteMetadata = {
   siteUrl: 'https://tupt.dev',
   siteRepo: 'https://github.com/MrTus97/Tuptdev',
-  siteLogo: '/static/images/logo.png',
+  siteLogo: '/static/images/tus-logo-512.png',
   image: '/static/images/logo.png',
   socialBanner: '/static/images/logo.jpg',
   email: 'mr.tus97@gmail.com',
@@ -13,10 +13,7 @@ export let siteMetadata = {
   locale: 'vi',
   analyticsURL: 'https://umami.tupt.dev/share/toCRym7jAFWa8Qwj/tupt.dev',
   analytics: {
-    plausibleDataDomain: '',
-    simpleAnalytics: false, // true | false
     umamiWebsiteId: 'd101f2cd-91f5-4ca9-8a0c-f98420f170ab',
-    googleAnalyticsId: 'G-90SZTXD4NC', // e.g. UA-000000-2 or G-XXXXXXX
   },
   socialAccounts: {
     github: 'MrTus97',

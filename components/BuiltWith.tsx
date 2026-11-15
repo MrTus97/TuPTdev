@@ -1,6 +1,10 @@
 import { useTranslation } from 'next-i18next'
 import { siteMetadata } from '~/data/siteMetadata'
-import { BrandIcon } from './BrandIcon'
+import NextJS from '~/icons/nextjs.svg'
+import Prisma from '~/icons/prisma.svg'
+import TailwindCSS from '~/icons/tailwind.svg'
+import Typescript from '~/icons/typescript.svg'
+import Umami from '~/icons/umami.svg'
 import { Link } from './Link'
 
 export function BuiltWith() {
@@ -11,19 +15,19 @@ export function BuiltWith() {
       <span className="mr-1 text-gray-500 dark:text-gray-400">{t('build_with.built_with')}</span>
       <div className="flex space-x-1.5">
         {/* <Link href="https://nextjs.org?ref=tupt.dev"> */}
-        <BrandIcon type="NextJS" className="h-5 w-5" />
+        <NextJS className="h-5 w-5" fill="currentColor" />
         {/* </Link> */}
         {/* <Link href="https://tailwindcss.com?ref=tupt.dev"> */}
-        <BrandIcon type="TailwindCSS" className="h-5 w-5" />
+        <TailwindCSS className="h-5 w-5" fill="currentColor" />
         {/* </Link> */}
         {/* <Link href="https://www.prisma.io?ref=tupt.dev"> */}
-        <BrandIcon type="Prisma" className="h-5 w-5" />
+        <Prisma className="h-5 w-5" fill="currentColor" />
         {/* </Link> */}
         {/* <Link href="https://www.typescriptlang.org?ref=tupt.dev"> */}
-        <BrandIcon type="Typescript" className="h-5 w-5" />
+        <Typescript className="h-5 w-5" fill="currentColor" />
         {/* </Link> */}
         {/* <Link href="https://umami.is?ref=tupt.dev" className="pl-px"> */}
-        <BrandIcon type="Umami" className="h-5 w-5" />
+        <Umami className="h-5 w-5" fill="currentColor" />
         {/* </Link> */}
       </div>
       <span className="px-1 text-gray-400 dark:text-gray-500">-</span>

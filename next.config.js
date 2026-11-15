@@ -16,6 +16,16 @@ module.exports = withBundleAnalyzer({
   typescript: { tsconfigPath: './tsconfig.json' },
   i18n,
   trailingSlash: true,
+  experimental: {
+    // The admin preview bundles MDX at runtime: ship the components it can import and esbuild
+    outputFileTracingIncludes: {
+      '/api/admin/preview': [
+        './components/**/*',
+        './node_modules/esbuild/**/*',
+        './node_modules/@esbuild/**/*',
+      ],
+    },
+  },
   webpack: (config, options) => {
     config.module.rules.push({
       test: /\.(png|jpe?g|gif|mp4)$/i,

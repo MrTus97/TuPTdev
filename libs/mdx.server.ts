@@ -18,23 +18,11 @@ import { remarkCodeBlockTitle } from './remark-code-block-title.server'
 import { remarkImgToJsx } from './remark-img-to-jsx.server'
 import { remarkTocHeading } from './remark-toc-heading.server'
 
-export async function getFileBySlug(
-  locale: string = process.env.NEXT_PUBLIC_DEFAULT_LOCALE,
-  type: string,
-  slug: string
-): Promise<MdxFileData> {
-  let root = process.cwd()
-  let mdxPath = path.join(root, 'data', locale, type, `${slug}.mdx`)
-  let mdPath = path.join(root, 'data', locale, type, `${slug}.md`)
-
-  if (!fs.existsSync(mdxPath) && !fs.existsSync(mdPath)) {
-    return null
-  }
-
-  let source = fs.existsSync(mdxPath)
-    ? fs.readFileSync(mdxPath, 'utf8')
-    : fs.readFileSync(mdPath, 'utf8')
-
+/**
+ * Bundle an MDX source string with the site's remark/rehype pipeline.
+ * Used for building posts and for the admin live preview.
+ */
+export async function bundleMdxSource(source: string) {
   /**
    * Point esbuild directly at the correct executable for the current platform
    * Ref: https://github.com/kentcdodds/mdx-bundler#nextjs-esbuild-enoent
@@ -114,6 +102,28 @@ export async function getFileBySlug(
       return options
     },
   })
+
+  return { toc, frontmatter, code }
+}
+
+export async function getFileBySlug(
+  locale: string = process.env.NEXT_PUBLIC_DEFAULT_LOCALE,
+  type: string,
+  slug: string
+): Promise<MdxFileData> {
+  let root = process.cwd()
+  let mdxPath = path.join(root, 'data', locale, type, `${slug}.mdx`)
+  let mdPath = path.join(root, 'data', locale, type, `${slug}.md`)
+
+  if (!fs.existsSync(mdxPath) && !fs.existsSync(mdPath)) {
+    return null
+  }
+
+  let source = fs.existsSync(mdxPath)
+    ? fs.readFileSync(mdxPath, 'utf8')
+    : fs.readFileSync(mdPath, 'utf8')
+
+  let { toc, frontmatter, code } = await bundleMdxSource(source)
 
   return {
     toc,
