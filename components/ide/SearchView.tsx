@@ -8,13 +8,13 @@ import {
   buildRegex,
   loadSearchIndex,
   MAX_RESULTS,
-  revealMatch,
   revealWhenReady,
   searchDocuments,
   type LineMatch,
   type SearchDocument,
   type SearchOptions,
 } from './search'
+import { rememberZoom, restoreZoom } from './keyboard'
 import { useWorkbench } from './Workbench'
 
 // Kept across view switches (the view unmounts when another side bar view is shown)
@@ -143,7 +143,7 @@ export function SearchView() {
     let [from, to] = match.ranges[0]
     let target = { re: regex.re, ordinal: match.ordinal, line: match.text, from, to }
     if (doc.path === activePath) {
-      revealMatch(target)
+      revealWhenReady(target) // retries if a folded code block has to be unfolded first
       closeDrawer()
       return
     }
@@ -183,14 +183,21 @@ export function SearchView() {
             ref={input}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onFocus={rememberZoom}
+            onBlur={restoreZoom}
+            enterKeyHint="search"
             onKeyDown={(e) => {
-              if (e.key === 'Enter') setDebounced(query)
+              if (e.key === 'Enter') {
+                setDebounced(query)
+                // Mobile "Search" key: hide the keyboard to show the results (blur zooms back out)
+                if (window.matchMedia('(pointer: coarse)').matches) e.currentTarget.blur()
+              }
               if (e.key === 'Escape') setQuery('')
             }}
             placeholder="Search"
             aria-label="Search the content of posts, snippets and the resume"
             spellCheck={false}
-            className="h-full min-w-0 flex-1 border-0 bg-transparent px-1.5 text-[13px] text-vsc-editor-fg placeholder:text-vsc-muted focus:outline-none focus:ring-0"
+            className="h-full min-w-0 flex-1 border-0 bg-transparent px-1.5 text-base text-vsc-editor-fg placeholder:text-vsc-muted focus:outline-none focus:ring-0 md:text-[13px]"
           />
           <div className="flex items-center gap-0.5">
             <Toggle

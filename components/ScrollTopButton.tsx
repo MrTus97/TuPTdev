@@ -38,7 +38,7 @@ export function ScrollTopButton() {
       type="button"
       onClick={handleClick}
       className={clsx(
-        'doraemon-top fixed bottom-10 right-6 z-40 hidden md:block lg:right-[124px]',
+        'doraemon-top fixed bottom-8 right-3 z-40 md:bottom-10 md:right-6 lg:right-[124px]',
         flying && 'is-flying',
         show || flying ? 'opacity-100' : 'pointer-events-none opacity-0'
       )}
@@ -55,7 +55,8 @@ function DoraemonCopter() {
       width="68"
       height="87"
       aria-hidden="true"
-      className="doraemon-body drop-shadow-lg"
+      // Smaller on phones; sized with width/height, not a transform (the fly animation uses it)
+      className="doraemon-body h-[61px] w-[48px] drop-shadow-lg md:h-[87px] md:w-[68px]"
     >
       <defs>
         <radialGradient id="dr-head" cx="38%" cy="30%" r="75%">

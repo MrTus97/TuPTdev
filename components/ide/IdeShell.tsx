@@ -5,19 +5,19 @@ import { Footer } from '~/components/Footer'
 import { ActivityBar, StatusBar, TitleBar } from './Chrome'
 import { Breadcrumbs, EditorTabs } from './EditorTabs'
 import { Explorer } from './Explorer'
-import { ExtensionsView } from './ExtensionsView'
 import { Minimap } from './Minimap'
 import { EDITOR_ID } from './Outline'
 import { EDITOR_SCROLL_ID } from './scroll'
 import { QuickOpen } from './QuickOpen'
 import { SearchView } from './SearchView'
+import { SideProjectsView } from './SideProjectsView'
 import { useWorkbench, WorkbenchProvider } from './Workbench'
 
 /**
  * VS Code-style workbench around every public page:
  *
  *   title bar (command center)
- *   activity bar | side bar (explorer/search/extensions) | tabs + breadcrumbs / editor | minimap
+ *   activity bar | side bar (explorer/search/side projects) | tabs + breadcrumbs / editor | minimap
  *   status bar
  *
  * The page itself never scrolls: the side bar panels and the editor (#ide-scroll) each have
@@ -69,7 +69,7 @@ function Workbench({ children }: { children: ReactNode }) {
           >
             {sideView === 'explorer' && <Explorer />}
             {sideView === 'search' && <SearchView />}
-            {sideView === 'extensions' && <ExtensionsView />}
+            {sideView === 'projects' && <SideProjectsView />}
           </aside>
         </div>
 

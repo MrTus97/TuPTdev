@@ -6,6 +6,7 @@ import { useLocale } from '~/hooks/useLocale'
 import { FileIcon } from './FileIcon'
 import { buildTree, describePath, flattenFiles, type FileKind } from './files'
 import { scrollEditorTo } from './scroll'
+import { rememberZoom, restoreZoom } from './keyboard'
 import { useWorkbench } from './Workbench'
 
 interface Item {
@@ -45,10 +46,15 @@ export function QuickOpen() {
     if (quickOpen === null) return
     setQuery(quickOpen)
     setSelected(0)
-    requestAnimationFrame(() => input.current?.focus())
+    // Synchronously after mount: the focus moves from the keyboard proxy (./keyboard) to the
+    // input, so the mobile keyboard that opened on the tap stays open
+    input.current?.focus()
   }, [quickOpen])
 
-  let close = () => setQuickOpen(null)
+  let close = () => {
+    restoreZoom()
+    setQuickOpen(null)
+  }
   let commandMode = query.startsWith('>')
 
   let files = useMemo<Item[]>(() => {
@@ -117,9 +123,9 @@ export function QuickOpen() {
         run: () => showView('search'),
       },
       {
-        id: 'extensions',
-        label: 'View: Show Extensions (side projects)',
-        run: () => showView('extensions'),
+        id: 'projects',
+        label: 'View: Show Side Projects',
+        run: () => showView('projects'),
       },
       {
         id: 'close',
@@ -192,7 +198,10 @@ export function QuickOpen() {
             placeholder={commandMode ? '' : 'Search files by name (append > for commands)'}
             aria-label="Quick open"
             aria-controls="quick-open-list"
-            className="h-[26px] w-full rounded-sm border border-vsc-focus bg-vsc-input px-1.5 text-[13px] text-vsc-editor-fg placeholder:text-vsc-muted focus:border-vsc-focus focus:outline-none focus:ring-0"
+            className="h-[26px] w-full rounded-sm border border-vsc-focus bg-vsc-input px-1.5 text-base text-vsc-editor-fg placeholder:text-vsc-muted focus:border-vsc-focus focus:outline-none focus:ring-0 md:text-[13px]"
+            onFocus={rememberZoom}
+            onBlur={restoreZoom}
+            enterKeyHint="go"
             onKeyDown={(e) => {
               if (e.key === 'Escape') close()
               else if (e.key === 'ArrowDown') {
