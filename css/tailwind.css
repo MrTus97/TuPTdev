@@ -2,6 +2,114 @@
 @tailwind components;
 @tailwind utilities;
 
+/* VS Code workbench colors: Light+ by default, Dark+ under .dark (next-themes) */
+:root {
+  --vsc-title: #dddddd;
+  --vsc-title-fg: #333333;
+  --vsc-activity: #2c2c2c;
+  --vsc-activity-fg: #ffffff;
+  --vsc-activity-muted: #ffffff73;
+  --vsc-sidebar: #f3f3f3;
+  --vsc-sidebar-fg: #616161;
+  --vsc-sidebar-header: #6f6f6f;
+  --vsc-editor: #ffffff;
+  --vsc-editor-fg: #333333;
+  --vsc-tabs: #f3f3f3;
+  --vsc-tab: #ececec;
+  --vsc-tab-fg: #333333b3;
+  --vsc-tab-active-fg: #333333;
+  --vsc-border: #e5e5e5;
+  --vsc-hover: #e8e8e8;
+  --vsc-selected: #e4e6f1;
+  --vsc-focus: #0060c0;
+  --vsc-muted: #717171;
+  --vsc-input: #ffffff;
+  --vsc-input-border: #cecece;
+  --vsc-widget: #f3f3f3;
+  --vsc-status: #007acc;
+  --vsc-status-hover: #ffffff1f;
+  --vsc-match: #ea5c0055;
+  --vsc-minimap-text: #00000033;
+  --vsc-minimap-heading: #0066b8aa;
+  --vsc-minimap-code: #00000014;
+  --vsc-minimap-slider: #64646433;
+  --vsc-minimap-slider-hover: #64646459;
+}
+.dark {
+  --vsc-title: #3c3c3c;
+  --vsc-title-fg: #cccccc;
+  --vsc-activity: #333333;
+  --vsc-activity-fg: #ffffff;
+  --vsc-activity-muted: #858585;
+  --vsc-sidebar: #252526;
+  --vsc-sidebar-fg: #cccccc;
+  --vsc-sidebar-header: #bbbbbb;
+  --vsc-editor: #1e1e1e;
+  --vsc-editor-fg: #d4d4d4;
+  --vsc-tabs: #252526;
+  --vsc-tab: #2d2d2d;
+  --vsc-tab-fg: #ffffff80;
+  --vsc-tab-active-fg: #ffffff;
+  --vsc-border: #2b2b2b;
+  --vsc-hover: #2a2d2e;
+  --vsc-selected: #37373d;
+  --vsc-focus: #007fd4;
+  --vsc-muted: #8b8b8b;
+  --vsc-input: #3c3c3c;
+  --vsc-input-border: #3c3c3c;
+  --vsc-widget: #252526;
+  --vsc-match: #ea5c0055;
+  --vsc-minimap-text: #ffffff2e;
+  --vsc-minimap-heading: #569cd6aa;
+  --vsc-minimap-code: #ffffff12;
+  --vsc-minimap-slider: #79797933;
+  --vsc-minimap-slider-hover: #64646459;
+}
+
+/* The workbench is fixed-height: only the editor (#ide-scroll) and side bar panels scroll */
+#ide-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Thin VS Code-like scrollbars inside the workbench panels */
+.vsc-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #79797966 transparent;
+}
+.vsc-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 3px;
+}
+.vsc-scroll::-webkit-scrollbar-thumb {
+  background: #79797966;
+}
+.vsc-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* Indeterminate progress bar (editor loading) */
+@keyframes vsc-progress {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+.vsc-progress {
+  animation: vsc-progress 1.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vsc-progress {
+    animation-duration: 3s;
+  }
+}
+.vsc-no-scrollbar {
+  scrollbar-width: none;
+}
+.vsc-no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .remark-code-title {
   @apply rounded-t bg-gray-700 px-5 py-3 font-mono text-sm font-bold text-gray-200;
 }

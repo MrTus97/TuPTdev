@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { useEffect, useRef, useState } from 'react'
 import smoothscroll from 'smoothscroll-polyfill'
+import { getEditorScroller } from './ide/scroll'
 
 const FLY_DURATION = 1100
 
@@ -11,11 +12,14 @@ export function ScrollTopButton() {
 
   useEffect(() => {
     smoothscroll.polyfill()
-    let handleWindowScroll = () => setShow(window.scrollY > 200)
-    handleWindowScroll()
-    window.addEventListener('scroll', handleWindowScroll)
+    // Inside the IDE workbench the editor scrolls, not the window
+    let target: HTMLElement | Window = getEditorScroller() || window
+    let handleScroll = () =>
+      setShow((target instanceof Window ? target.scrollY : target.scrollTop) > 200)
+    handleScroll()
+    target.addEventListener('scroll', handleScroll, { passive: true })
     return () => {
-      window.removeEventListener('scroll', handleWindowScroll)
+      target.removeEventListener('scroll', handleScroll)
       clearTimeout(timer.current)
     }
   }, [])
@@ -23,7 +27,7 @@ export function ScrollTopButton() {
   let handleClick = () => {
     if (flying) return
     setFlying(true)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    ;(getEditorScroller() || window).scrollTo({ top: 0, behavior: 'smooth' })
     timer.current = setTimeout(() => setFlying(false), FLY_DURATION)
   }
 
@@ -34,7 +38,7 @@ export function ScrollTopButton() {
       type="button"
       onClick={handleClick}
       className={clsx(
-        'doraemon-top fixed bottom-6 right-6 z-40 hidden md:block',
+        'doraemon-top fixed bottom-10 right-6 z-40 hidden md:block lg:right-[124px]',
         flying && 'is-flying',
         show || flying ? 'opacity-100' : 'pointer-events-none opacity-0'
       )}

@@ -1,6 +1,7 @@
 import { PageSeo } from 'components/SEO'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { localized, sideProjectHref, sideProjects } from '~/data/sideProjectsData'
 
@@ -40,8 +41,8 @@ export default function SideProjects() {
               let href = sideProjectHref(project.slug)
               return (
                 <div key={project.slug} className="p-4 md:w-1/2" style={{ maxWidth: '544px' }}>
-                  {/* Plain <a>: the showcase is a static HTML page, not a Next.js route */}
-                  <a
+                  {/* Opens the showcase in an editor tab (pages/side-projects/[slug].tsx) */}
+                  <NextLink
                     href={href}
                     className="group flex h-full flex-col overflow-hidden rounded-lg shadow-nextjs dark:shadow-nextjs-dark"
                     data-umami-event={`side-project-${project.slug}`}
@@ -83,7 +84,7 @@ export default function SideProjects() {
                         {t('side_projects.view')} &rarr;
                       </span>
                     </div>
-                  </a>
+                  </NextLink>
                 </div>
               )
             })}
