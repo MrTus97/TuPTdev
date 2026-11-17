@@ -95,5 +95,12 @@
     "description": "Things I build in my spare time — each one with a showcase page and demo videos.",
     "view": "View showcase",
     "all": "All side projects"
+  },
+  "code": {
+    "copy": "Copy code",
+    "copied": "Copied",
+    "wrap": "Wrap lines",
+    "show_more": "Show {{count}} more lines",
+    "show_less": "Show less"
   }
 }

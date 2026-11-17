@@ -5,16 +5,15 @@ import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import {
   AreaChart,
-  Bell,
-  Blocks,
   CircleUser,
   Files,
+  FolderKanban,
   GitBranch,
-  Github,
   Menu,
   MoonStar,
   Search,
   Settings,
+  ShieldCheck,
   Sun,
   TriangleAlert,
   CircleX,
@@ -111,7 +110,7 @@ export function TitleBar() {
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
         <ThemeToggle className="rounded p-1 hover:bg-vsc-hover" size={16} />
-        <LocaleToggle className="rounded px-1.5 py-0.5 text-[12px] font-semibold hover:bg-vsc-hover" />
+        <LocaleToggle className="rounded p-1 hover:bg-vsc-hover" />
       </div>
     </header>
   )
@@ -122,12 +121,14 @@ function ActivityButton({
   active,
   onClick,
   href,
+  newTab,
   children,
 }: {
   label: string
   active?: boolean
   onClick?: () => void
   href?: string
+  newTab?: boolean // open in a new browser tab (external links always do)
   children: ReactNode
 }) {
   let className = clsx(
@@ -144,7 +145,7 @@ function ActivityButton({
   )
   if (href) {
     let external = !href.startsWith('/')
-    return external ? (
+    return external || newTab ? (
       <a
         href={href}
         target="_blank"
@@ -189,9 +190,9 @@ export function ActivityBar() {
       icon: <Search size={24} strokeWidth={1.25} />,
     },
     {
-      view: 'extensions',
-      label: 'Extensions — side projects',
-      icon: <Blocks size={24} strokeWidth={1.25} />,
+      view: 'projects',
+      label: 'Side Projects',
+      icon: <FolderKanban size={24} strokeWidth={1.25} />,
     },
   ]
   return (
@@ -215,6 +216,10 @@ export function ActivityBar() {
         </ActivityButton>
       </div>
       <div>
+        {/* The admin CMS has its own layout (pages/admin, outside the workbench): own browser tab */}
+        <ActivityButton label="Admin — CMS (new tab)" href="/admin/" newTab>
+          <ShieldCheck size={24} strokeWidth={1.25} />
+        </ActivityButton>
         <ActivityButton label="Accounts — Resume" href="/resume/">
           <CircleUser size={24} strokeWidth={1.25} />
         </ActivityButton>
@@ -259,7 +264,8 @@ function LocaleToggle({ className }: { className?: string }) {
       onClick={() => updateLocale(next)}
       className={className}
     >
-      {locale.code.toUpperCase()}
+      {/* The current language's flag; clicking switches to the other one */}
+      <NextImage src={locale.flag} alt={locale.name} width={18} height={18} className="block" />
     </button>
   )
 }
@@ -338,8 +344,7 @@ export function StatusBar() {
         >
           {info.language}
         </button>
-        <LocaleToggle className={item} />
-        <ThemeToggle className={item} />
+        {/* Theme and language live in the title bar; the status bar only links analytics */}
         <a
           href={siteMetadata.analyticsURL}
           target="_blank"
@@ -351,19 +356,6 @@ export function StatusBar() {
         >
           <AreaChart size={13} />
         </a>
-        <a
-          href={siteMetadata.github}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={clsx(item, 'hidden sm:flex')}
-          aria-label="GitHub"
-          title="GitHub"
-        >
-          <Github size={13} />
-        </a>
-        <span className={clsx(item, 'hidden sm:flex')} aria-hidden="true">
-          <Bell size={13} />
-        </span>
       </div>
     </footer>
   )

@@ -10,9 +10,11 @@ import {
   type ReactNode,
 } from 'react'
 import { normalizePath } from './files'
+import { primeKeyboard } from './keyboard'
 import { getEditorScroller, scrollEditorTo } from './scroll'
+import { clearSearchHighlight } from './search'
 
-export type SideView = 'explorer' | 'search' | 'extensions'
+export type SideView = 'explorer' | 'search' | 'projects'
 
 interface WorkbenchState {
   tabs: string[]
@@ -44,11 +46,18 @@ function isMobile() {
   return typeof window !== 'undefined' && window.matchMedia('(max-width: 767px)').matches
 }
 
+/** Pages that open as editor tabs: everything but the admin CMS, which has its own layout. */
+function isTabPath(path: string) {
+  return !/^\/admin(\/|$)/.test(path)
+}
+
 function readStoredTabs(): string[] {
   try {
     let raw = window.localStorage.getItem(STORAGE_KEY)
     let tabs = raw ? JSON.parse(raw) : []
-    return Array.isArray(tabs) ? tabs.filter((t) => typeof t === 'string' && t.startsWith('/')) : []
+    return Array.isArray(tabs)
+      ? tabs.filter((t) => typeof t === 'string' && t.startsWith('/') && isTabPath(t))
+      : []
   } catch {
     return []
   }
@@ -62,7 +71,12 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
   let [sideView, setSideView] = useState<SideView>('explorer')
   let [sidebarOpen, setSidebarOpen] = useState(true)
   let [drawerOpen, setDrawerOpen] = useState(false)
-  let [quickOpen, setQuickOpen] = useState<string | null>(null)
+  let [quickOpen, setQuickOpenState] = useState<string | null>(null)
+  // Called from taps/clicks: bring the mobile keyboard up within the gesture (see ./keyboard)
+  let setQuickOpen = useCallback((query: string | null) => {
+    if (query !== null) primeKeyboard()
+    setQuickOpenState(query)
+  }, [])
   let [pendingPath, setPendingPath] = useState<string | null>(null)
   let addedOnStart = useRef<string | null>(null) // tab opened for a route that may still fail
 
@@ -102,9 +116,11 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       normalizePath(url.replace(new RegExp(`^/(${(router.locales || []).join('|')})(?=/)`), ''))
     let onStart = (url: string) => {
       scrollByPath.current[normalizePath(router.asPath)] = getEditorScroller()?.scrollTop || 0
+      clearSearchHighlight() // a revealed search match belongs to the page being left
       // Like VS Code, the tab opens right away and shows progress until the page is rendered
       let path = stripLocale(url)
       if (path === normalizePath(router.asPath)) return // locale switch / same page
+      if (!isTabPath(path)) return // leaving the workbench (admin CMS)
       setPendingPath(path)
       setTabs((current) => {
         if (current.includes(path)) return current
@@ -187,6 +203,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
   let showView = useCallback(
     (view: SideView) => {
       if (isMobile()) {
+        if (view === 'search') primeKeyboard() // the Search view focuses its input
         setSideView(view)
         setDrawerOpen(true)
       } else if (view === sideView && sidebarOpen) {
@@ -229,7 +246,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [toggleSidebar, closeTab, focusedPath])
+  }, [toggleSidebar, closeTab, focusedPath, setQuickOpen])
 
   let value = useMemo<WorkbenchState>(
     () => ({
@@ -253,6 +270,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       tabs,
       activePath,
       pendingPath,
+      focusedPath,
       openTab,
       closeTab,
       closeOthers,
@@ -263,6 +281,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       toggleSidebar,
       closeDrawer,
       quickOpen,
+      setQuickOpen,
     ]
   )
 

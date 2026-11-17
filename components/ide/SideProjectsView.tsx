@@ -3,15 +3,12 @@ import { useRouter } from 'next/router'
 import { localized, sideProjectHref, sideProjects } from '~/data/sideProjectsData'
 import { PanelHeader } from './Explorer'
 
-/** Side projects listed like installed extensions. */
-export function ExtensionsView() {
+/** Side projects, each opening its showcase in an editor tab. */
+export function SideProjectsView() {
   let { locale } = useRouter()
   return (
     <div className="flex h-full flex-col">
-      <PanelHeader title="Extensions" />
-      <p className="px-5 pb-1 text-[11px] font-bold uppercase tracking-wide text-vsc-sidebar-fg">
-        Installed · {sideProjects.length}
-      </p>
+      <PanelHeader title="Side Projects" />
       <ul className="vsc-scroll min-h-0 flex-1 overflow-y-auto">
         {sideProjects.map((p) => (
           <li key={p.slug}>
