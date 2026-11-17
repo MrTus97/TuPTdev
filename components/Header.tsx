@@ -7,6 +7,7 @@ import { AnalyticsLink } from './AnalyticsLink'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { Link } from './Link'
 import { MobileNavToggle } from './MobileNavToggle'
+import { SideProjectsMenu } from './SideProjectsMenu'
 import { ThemeSwitcher } from './ThemeSwitcher'
 // import SearchButton from './search/SearchButton'
 
@@ -56,6 +57,7 @@ export function Header({ navShow, onToggleNav }: { onToggleNav: () => void; navS
                 </span>
               </Link>
             ))}
+            <SideProjectsMenu />
           </div>
           <div className="flex items-center gap-1">
             {/* <SearchButton /> */}

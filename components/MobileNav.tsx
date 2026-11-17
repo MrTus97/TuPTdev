@@ -1,4 +1,5 @@
 import { headerNavLinks } from '~/data/headerNavLinks'
+import { sideProjectHref, sideProjects } from '~/data/sideProjectsData'
 import { Link } from './Link'
 import clsx from 'clsx'
 import { useTranslation } from 'next-i18next'
@@ -32,6 +33,26 @@ export function MobileNav({ navShow, onToggleNav }) {
             </Link>
           </div>
         ))}
+        <div className="px-8 py-4">
+          <Link
+            href="/side-projects"
+            className="text-2xl font-semibold tracking-wide text-gray-900 dark:text-gray-100"
+            onClick={onToggleNav}
+          >
+            {t('menu_side_projects')}
+          </Link>
+          <div className="mt-2 space-y-2 border-l border-gray-400 pl-4 dark:border-gray-600">
+            {sideProjects.map((project) => (
+              <a
+                key={project.slug}
+                href={sideProjectHref(project.slug)}
+                className="block text-lg text-gray-700 dark:text-gray-300"
+              >
+                {project.title}
+              </a>
+            ))}
+          </div>
+        </div>
       </nav>
     </div>
   )

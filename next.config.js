@@ -16,6 +16,12 @@ module.exports = withBundleAnalyzer({
   typescript: { tsconfigPath: './tsconfig.json' },
   i18n,
   trailingSlash: true,
+  // Side project showcases are static HTML pages in public/side-projects/<slug>/index.html;
+  // serve them at the folder URL so their relative asset paths (img/, icons/) resolve
+  async rewrites() {
+    // (no `locale: false`: with i18n + trailingSlash that variant never matches in Next 14)
+    return [{ source: '/side-projects/:slug', destination: '/side-projects/:slug/index.html' }]
+  },
   experimental: {
     // The admin preview bundles MDX at runtime with esbuild, so the function needs the
     // components posts import, what they import through the `~/` alias, and tsconfig.json

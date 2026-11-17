@@ -15,6 +15,7 @@
   "menu_projects": "Projects",
   "menu_about": "About",
   "menu_resume": "Resume",
+  "menu_side_projects": "Side projects",
   "greeting_message": "Xin chào, ",
   "introduction": "Tôi là",
   "name": "Phan Thanh Tú",
@@ -88,5 +89,11 @@
   },
   "tag": {
     "no_tags_found": "Không tìm thấy tags"
+  },
+  "side_projects": {
+    "title": "Side projects",
+    "description": "Những thứ tôi làm ngoài giờ — mỗi dự án có trang giới thiệu và video demo.",
+    "view": "Xem giới thiệu",
+    "all": "Tất cả side project"
   }
 }

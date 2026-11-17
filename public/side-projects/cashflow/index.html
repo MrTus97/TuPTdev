@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MoneyTus — Sổ tiền cá nhân & các quỹ giữ hộ</title>
+<meta name="description" content="MoneyTus: app quản lý dòng tiền cá nhân và các quỹ giữ hộ. Một tài khoản ngân hàng chứa tiền của nhiều quỹ — luôn biết tiền nằm ở đâu và là của ai. Ghi một khoản chi trong 5 giây, quét VietQR, đối soát với sao kê, chia bill, ngân sách, vàng & tiền số.">
+<meta property="og:title" content="MoneyTus — Luôn biết tiền nằm ở đâu và là của ai">
+<meta property="og:description" content="Sổ tiền cá nhân & các quỹ giữ hộ: ghi chi 5 giây, quét VietQR, đối soát sao kê, chia bill, ngân sách, vàng & tiền số. PWA chạy cả khi mất mạng.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://www.tupt.dev/side-projects/cashflow/img/og.png">
+<meta property="og:url" content="https://www.tupt.dev/side-projects/cashflow/">
+<link rel="canonical" href="https://www.tupt.dev/side-projects/cashflow/">
+<meta name="theme-color" content="#0E9F6E">
+<link rel="icon" href="icons/app.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --tint: #0E9F6E; --tint-2: #16B67F; --tint-soft: #DDF5EA; --tint-ink: #087A54;
+  --bg: #F2F2F7; --card: #FFFFFF; --ink: #111114; --ink-2: #4A4A55; --ink-3: #8A8A96;
+  --line: #E3E3EA; --red: #FF3B30; --gold: #F2B230; --blue: #2F7BE0;
+  --shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 32px rgba(15,40,30,.08);
+  --radius: 22px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0B0B0D; --card: #1C1C1E; --ink: #F4F4F6; --ink-2: #C2C2CC; --ink-3: #8E8E99;
+    --line: #2C2C30; --tint-soft: #10362A; --tint-ink: #4FD6A2;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 40px rgba(0,0,0,.45);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0B0B0D; --card: #1C1C1E; --ink: #F4F4F6; --ink-2: #C2C2CC; --ink-3: #8E8E99;
+  --line: #2C2C30; --tint-soft: #10362A; --tint-ink: #4FD6A2;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 16px 40px rgba(0,0,0,.45);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font-family: "Be Vietnam Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 17px; line-height: 1.6; overflow-x: hidden;
+}
+img { max-width: 100%; display: block; }
+a { color: var(--tint-ink); text-decoration: none; }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 16px; }
+h1, h2, h3 { line-height: 1.2; letter-spacing: -.02em; margin: 0; }
+h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; }
+h3 { font-size: 21px; font-weight: 700; }
+.eyebrow { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--tint-ink); margin-bottom: 10px; }
+.lead { color: var(--ink-2); font-size: 19px; }
+.muted { color: var(--ink-3); }
+
+/* nav */
+.nav { position: sticky; top: 0; z-index: 20; backdrop-filter: saturate(180%) blur(18px); -webkit-backdrop-filter: saturate(180%) blur(18px); background: color-mix(in srgb, var(--bg) 78%, transparent); border-bottom: 1px solid color-mix(in srgb, var(--line) 70%, transparent); }
+.nav .wrap { display: flex; align-items: center; gap: 20px; height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 19px; color: var(--ink); }
+.brand img { width: 32px; height: 32px; }
+.nav-links { display: flex; gap: 22px; margin-left: auto; font-size: 15px; font-weight: 500; }
+.nav-links a { color: var(--ink-2); }
+.nav-links a:hover { color: var(--ink); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 46px; padding: 0 22px; border-radius: 999px; font-weight: 700; font-size: 16px; border: 0; cursor: pointer; }
+.btn-primary { background: var(--tint); color: #fff; box-shadow: 0 8px 20px rgba(14,159,110,.3); }
+.btn-primary:hover { background: var(--tint-2); }
+.btn-ghost { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+.nav .btn { height: 38px; padding: 0 16px; font-size: 14px; }
+
+/* hero */
+.hero { padding: 64px 0 40px; position: relative; overflow-x: clip; }
+.hero::before { content: ""; position: absolute; inset: -60px 0 auto; height: 560px; background: radial-gradient(60% 60% at 70% 30%, color-mix(in srgb, var(--tint) 18%, transparent), transparent 70%); pointer-events: none; }
+.hero .wrap { display: grid; grid-template-columns: 1.05fr 1fr; gap: 40px; align-items: center; position: relative; }
+.hero h1 { font-size: clamp(36px, 5.6vw, 60px); font-weight: 800; letter-spacing: -.035em; }
+.hero h1 em { font-style: normal; color: var(--tint); }
+.hero .lead { margin: 20px 0 28px; max-width: 34em; }
+.cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.chip { font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: var(--card); color: var(--ink-2); box-shadow: var(--shadow); }
+.hero-phones { position: relative; height: 620px; }
+.hero-phones .device { position: absolute; }
+.hero-phones .p1 { left: 50%; top: 0; transform: translateX(-50%); z-index: 3; width: 290px; }
+.hero-phones .p2 { left: 0; top: 70px; transform: rotate(-7deg); z-index: 2; width: 245px; }
+.hero-phones .p3 { right: 0; top: 70px; transform: rotate(7deg); z-index: 2; width: 245px; }
+
+/* iPhone 15 images (frame baked into the transparent WebP) */
+.device { position: relative; width: 320px; max-width: 100%; filter: drop-shadow(0 28px 36px rgba(0,0,0,.22)); }
+.device img { width: 100%; height: auto; cursor: zoom-in; }
+.dot { position: absolute; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: var(--tint); color: #fff; font-weight: 800; font-size: 15px; display: grid; place-items: center; box-shadow: 0 0 0 4px rgba(255,255,255,.85), 0 6px 14px rgba(0,0,0,.25); z-index: 2; pointer-events: none; }
+.dot::before { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--tint); animation: pulse 2.4s ease-out infinite; }
+@keyframes pulse { 0% { transform: scale(1); opacity: .8; } 100% { transform: scale(1.9); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .dot::before { animation: none; } html { scroll-behavior: auto; } }
+
+/* problem */
+.section { padding: 80px 0; }
+.problem { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 36px; }
+.panel { background: var(--card); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); }
+.panel h3 { margin-bottom: 12px; }
+.panel ul { margin: 0; padding-left: 20px; color: var(--ink-2); }
+.panel li { margin: 6px 0; }
+.panel.before h3 { color: var(--red); }
+.panel.after { background: linear-gradient(160deg, var(--card) 40%, var(--tint-soft)); }
+.panel.after h3 { color: var(--tint-ink); }
+.flow { display: grid; grid-template-columns: auto 1fr; gap: 14px 18px; align-items: center; margin-top: 20px; }
+.acct { background: #5B2CA0; color: #fff; border-radius: 16px; padding: 14px 16px; font-weight: 700; font-size: 15px; text-align: center; grid-row: span 3; }
+.acct small { display: block; font-weight: 500; opacity: .8; }
+.fund { display: flex; justify-content: space-between; gap: 10px; background: var(--bg); border-radius: 12px; padding: 9px 14px; font-size: 15px; }
+.fund b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fund > span { white-space: nowrap; }
+.tag { font-size: 11px; font-weight: 700; color: var(--gold); border: 1px solid var(--gold); padding: 0 6px; border-radius: 6px; margin-left: 6px; vertical-align: 2px; }
+
+/* stats */
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 40px; }
+.stat { background: var(--card); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+.stat b { display: block; font-size: 30px; font-weight: 800; letter-spacing: -.03em; color: var(--tint-ink); }
+.stat span { color: var(--ink-2); font-size: 15px; }
+
+/* features */
+.feature { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; padding: 56px 0; }
+.feature:nth-of-type(even) .f-media { order: 2; }
+.f-media { display: flex; justify-content: center; position: relative; }
+.f-media::before { content: ""; position: absolute; width: 78%; aspect-ratio: 1; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); background: radial-gradient(closest-side, color-mix(in srgb, var(--tint) 16%, transparent), transparent); }
+.f-text p { color: var(--ink-2); margin: 14px 0 0; }
+.points { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 14px; }
+.points li { display: grid; grid-template-columns: 30px 1fr; gap: 12px; align-items: start; }
+.points .n { font-style: normal; width: 30px; height: 30px; border-radius: 50%; background: var(--tint); color: #fff; font-weight: 800; font-size: 15px; display: grid; place-items: center; margin-top: 1px; }
+.points b { display: block; font-weight: 700; }
+.points span { color: var(--ink-2); font-size: 16px; }
+
+/* bento */
+.bento { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 36px; }
+.tile { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); padding: 22px 22px 0; overflow: hidden; display: flex; flex-direction: column; }
+.tile h3 { font-size: 18px; }
+.tile p { color: var(--ink-2); font-size: 15px; margin: 8px 0 18px; }
+.tile .shot { margin-top: auto; overflow: hidden; aspect-ratio: 914 / 1060; cursor: zoom-in; }
+.tile .shot img { width: 100%; height: auto; }
+.tile .shot.bottom { display: flex; align-items: flex-end; }
+.tile.wide { grid-column: span 2; }
+.tile.wide .shot { width: 56%; align-self: center; }
+.mini { list-style: none; padding: 0; margin: 28px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px 24px; }
+.mini li { display: flex; gap: 10px; align-items: baseline; color: var(--ink-2); font-size: 16px; }
+.mini li::before { content: "✓"; color: var(--tint); font-weight: 800; }
+
+/* tech */
+.tech { background: var(--card); border-radius: 28px; padding: 40px; box-shadow: var(--shadow); }
+.logos { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 32px; }
+.logo { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 12px; background: var(--bg); font-size: 15px; font-weight: 600; }
+.logo img { width: 20px; height: 20px; object-fit: contain; }
+.dark-invert { filter: none; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .dark-invert { filter: invert(1); } }
+:root[data-theme="dark"] .dark-invert { filter: invert(1); }
+.decisions { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+.decision { border: 1px solid var(--line); border-radius: 18px; padding: 18px 20px; }
+.decision b { display: block; margin-bottom: 4px; }
+.decision span { color: var(--ink-2); font-size: 15px; }
+code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .88em; background: var(--bg); padding: 1px 6px; border-radius: 6px; }
+
+/* compact copy */
+.f-title { font-size: clamp(26px, 3.2vw, 36px); margin-top: 4px; }
+.points b { font-size: 18px; line-height: 1.4; padding-top: 3px; }
+.points li { align-items: center; }
+.xlist { list-style: none; padding: 0 !important; }
+.xlist li { display: flex; gap: 10px; font-size: 17px; }
+.xlist li::before { content: "✕"; color: var(--red); font-weight: 800; }
+.panel.after h3 { margin-bottom: 4px; }
+#van-de .problem, #them .bento { margin-top: 28px; }
+.tile p { margin: 6px 0 16px; }
+/* demo videos */
+.demo-main { margin-top: 36px; background: var(--card); border-radius: 26px; padding: 12px; box-shadow: var(--shadow); }
+.demo-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 18px; overflow: hidden; background: #000; }
+.demo-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.demo-poster { all: unset; position: absolute; inset: 0; cursor: pointer; display: grid; place-items: center; }
+.demo-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.demo-play { position: relative; width: 76px; height: 76px; border-radius: 50%; background: var(--tint); color: #fff; display: grid; place-items: center; font-size: 28px; padding-left: 5px; box-shadow: 0 10px 30px rgba(0,0,0,.35); transition: transform .2s; }
+.demo-poster:hover .demo-play, .demo-poster:focus-visible .demo-play { transform: scale(1.08); }
+.demo-soon { position: relative; background: rgba(0,0,0,.66); color: #fff; font-weight: 600; font-size: 15px; padding: 8px 16px; border-radius: 999px; }
+.back-link { color: var(--ink-3); font-size: 14px; font-weight: 600; white-space: nowrap; }
+.back-link:hover { color: var(--ink); }
+.demo-now { display: flex; justify-content: space-between; gap: 12px; padding: 14px 10px 6px; font-size: 17px; }
+.demo-list { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 18px; }
+.demo-item { all: unset; cursor: pointer; background: var(--card); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; outline-offset: 3px; }
+.demo-item:focus-visible { outline: 2px solid var(--tint); }
+.demo-item img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.demo-item span { padding: 10px 12px 12px; font-size: 14px; font-weight: 600; line-height: 1.35; color: var(--ink); }
+.demo-item small { display: block; font-weight: 500; color: var(--ink-3); margin-top: 2px; }
+.demo-item[aria-current="true"] { box-shadow: 0 0 0 3px var(--tint), var(--shadow); }
+@media (max-width: 960px) { .demo-list { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 560px) { .demo-list { grid-template-columns: repeat(2, 1fr); } .demo-main { padding: 6px; border-radius: 18px; } .demo-frame { border-radius: 13px; } }
+footer { padding: 28px 0 40px; color: var(--ink-3); font-size: 14px; text-align: center; }
+
+/* lightbox */
+.lb { position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,.82); display: none; align-items: center; justify-content: center; padding: 20px; cursor: zoom-out; }
+.lb.open { display: flex; }
+.lb img { max-height: 92vh; width: auto; }
+
+/* reveal */
+.reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+.reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+@media (max-width: 960px) {
+  .hero .wrap, .feature, .problem { grid-template-columns: 1fr; }
+  .hero { padding-top: 40px; }
+  .hero-phones { height: 470px; }
+  .hero-phones .p1 { width: 220px; }
+  .hero-phones .p2, .hero-phones .p3 { width: 185px; top: 56px; }
+  .feature { gap: 36px; padding: 40px 0; }
+  .feature:nth-of-type(even) .f-media { order: 0; }
+  .stats { grid-template-columns: repeat(2, 1fr); }
+  .bento { grid-template-columns: repeat(2, 1fr); }
+  .mini { grid-template-columns: repeat(2, 1fr); }
+  .decisions { grid-template-columns: 1fr; }
+  .nav-links { display: none; }
+  .nav .btn { margin-left: auto; }
+}
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .section { padding: 56px 0; }
+  .hero-phones { height: 390px; }
+  .hero-phones .p1 { width: 184px; }
+  .hero-phones .p2, .hero-phones .p3 { width: 152px; top: 48px; }
+  .hero-phones .p2 { left: -4%; } .hero-phones .p3 { right: -4%; }
+  .device { width: 270px; }
+  .bento { grid-template-columns: 1fr; }
+  .flow { grid-template-columns: 1fr; gap: 10px; }
+  .acct { grid-row: auto; display: flex; justify-content: space-between; align-items: baseline; }
+  .panel { padding: 22px 18px; }
+  .tile.wide { grid-column: auto; }
+  .tile.wide .shot, .tile .shot { width: 78%; align-self: center; }
+  .mini { grid-template-columns: 1fr; }
+  .tech { padding: 26px 18px; border-radius: 22px; }
+  .stat { padding: 18px; }
+  .stat b { font-size: 24px; }
+  .dot { width: 26px; height: 26px; margin: -13px 0 0 -13px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="back-link" href="/side-projects/" title="Side projects · tupt.dev">← tupt.dev</a>
+    <a class="brand" href="#top"><img src="icons/app.svg" alt="">MoneyTus</a>
+    <div class="nav-links">
+      <a href="#van-de">Vấn đề</a>
+      <a href="#tinh-nang">Tính năng</a>
+      <a href="#them">Còn gì nữa</a>
+      <a href="#cong-nghe">Công nghệ</a>
+      <a href="#demo">Video demo</a>
+    </div>
+    <a class="btn btn-primary" href="#demo">Xem video</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow">Sổ tiền cá nhân & quỹ giữ hộ</span>
+      <h1>Một tài khoản, nhiều quỹ. <em>Luôn biết tiền là của ai.</em></h1>
+      <p class="lead">Ghi chi trong 5 giây. Đối soát với ngân hàng tới từng đồng.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="#demo">▶ Xem video</a>
+        <a class="btn btn-ghost" href="#tinh-nang">Tính năng</a>
+      </div>
+      <div class="chips">
+        <span class="chip">📱 PWA</span>
+        <span class="chip">📶 Offline</span>
+        <span class="chip">🔐 Face ID</span>
+        <span class="chip">👥 Chia sẻ ví</span>
+      </div>
+    </div>
+    <div class="hero-phones reveal" aria-label="Ảnh màn hình MoneyTus">
+      <div class="device p2"><img src="img/E03-02.webp" alt="Thêm giao dịch với bàn phím số" loading="eager"></div>
+      <div class="device p1"><img src="img/E01-02.webp" alt="Màn Tổng quan" loading="eager"></div>
+      <div class="device p3"><img src="img/E08-03.webp" alt="Đối soát tài khoản TPBank" loading="eager"></div>
+    </div>
+  </div>
+</header>
+
+<section class="section" id="van-de">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <span class="eyebrow">Vì sao có MoneyTus</span>
+      <h2>Google Sheets, sổ tay → 1 app</h2>
+    </div>
+    <div class="problem">
+      <div class="panel before reveal">
+        <h3>Trước</h3>
+        <ul class="xlist">
+          <li><span>Ghi Sheets, ghi sổ, cộng trừ bằng tay</span></li>
+          <li><span>Lệch <b>−303.000 đ</b>, không biết ở đâu</span></li>
+          <li><span>Gõ trên điện thoại rất chậm</span></li>
+        </ul>
+      </div>
+      <div class="panel after reveal">
+        <h3>Sau: tiền ở đâu · tiền của ai</h3>
+        <div class="flow" aria-label="Một tài khoản TPBank chia thành nhiều quỹ">
+          <div class="acct">TPBank<small>146.682.000 đ</small></div>
+          <div class="fund"><span>💰 Quỹ tiêu</span><b>112.735.000 đ</b></div>
+          <div class="fund"><span>🐷 Tiết kiệm</span><b>21.640.000 đ</b></div>
+          <div class="fund"><span>⚽ Đội bóng <span class="tag">GIỮ HỘ</span></span><b>12.307.000 đ</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat reveal"><b>≤ 5 giây</b><span>ghi một khoản chi</span></div>
+      <div class="stat reveal"><b>0 đ</b><span>lệch sau đối soát</span></div>
+      <div class="stat reveal"><b>Nhiều ví</b><span>quỹ, tài khoản, người dùng</span></div>
+      <div class="stat reveal"><b>Offline</b><span>mất mạng vẫn ghi</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="tinh-nang">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <span class="eyebrow">Tính năng nổi bật</span>
+      <h2>Ít thao tác, đủ việc</h2>
+    </div>
+
+    <article class="feature">
+      <div class="f-media reveal">
+        <div class="device">
+          <img src="img/E03-02.webp" alt="Thêm giao dịch: 45.000 đ, bàn phím số có phép tính" loading="lazy">
+          <span class="dot" style="left:61.3%;top:35.2%">1</span>
+          <span class="dot" style="left:72.6%;top:41.4%">2</span>
+          <span class="dot" style="left:11.8%;top:47.8%">3</span>
+          <span class="dot" style="left:71.1%;top:58.2%">4</span>
+        </div>
+      </div>
+      <div class="f-text reveal">
+        <span class="eyebrow">Ghi chép</span>
+        <h3 class="f-title">Ghi chi trong 5 giây</h3>
+        <ul class="points">
+          <li><i class="n">1</i><b>Số tiền hiện ngay, có phím 000</b></li>
+          <li><i class="n">2</i><b>Tự chọn danh mục theo số tiền</b></li>
+          <li><i class="n">3</i><b>Tiền mặt, chuyển khoản, thẻ tín dụng</b></li>
+          <li><i class="n">4</i><b>Bàn phím tính + − × ÷</b></li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="feature">
+      <div class="f-media reveal">
+        <div class="device">
+          <img src="img/E05-02.webp" alt="Quét VietQR: điền sẵn người nhận, số tiền, danh mục" loading="lazy">
+          <span class="dot" style="left:65.6%;top:21.1%">1</span>
+          <span class="dot" style="left:56.9%;top:48.0%">2</span>
+          <span class="dot" style="left:78.8%;top:89.2%">3</span>
+        </div>
+      </div>
+      <div class="f-text reveal">
+        <span class="eyebrow">VietQR</span>
+        <h3 class="f-title">Quét QR: vừa trả vừa ghi</h3>
+        <ul class="points">
+          <li><i class="n">1</i><b>Điền sẵn người nhận, số tiền</b></li>
+          <li><i class="n">2</i><b>Nhớ danh mục theo người nhận</b></li>
+          <li><i class="n">3</i><b>Lưu rồi mở app ngân hàng</b></li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="feature">
+      <div class="f-media reveal">
+        <div class="device">
+          <img src="img/E08-03.webp" alt="Đối soát TPBank: chênh lệch, tiền thuộc quỹ nào, giao dịch chưa khớp" loading="lazy">
+          <span class="dot" style="left:51.0%;top:47.7%">1</span>
+          <span class="dot" style="left:41.6%;top:73.1%">2</span>
+          <span class="dot" style="left:57.5%;top:78.2%">3</span>
+        </div>
+      </div>
+      <div class="f-text reveal">
+        <span class="eyebrow">Đối soát</span>
+        <h3 class="f-title">Nhập sao kê, thấy ngay lệch</h3>
+        <ul class="points">
+          <li><i class="n">1</i><b>Chênh lệch hiện khi gõ</b></li>
+          <li><i class="n">2</i><b>Tiền trong tài khoản thuộc quỹ nào</b></li>
+          <li><i class="n">3</i><b>Đánh dấu khớp từng giao dịch</b></li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="feature">
+      <div class="f-media reveal">
+        <div class="device">
+          <img src="img/E14-01.webp" alt="Ngân sách tháng này với thanh tiến độ" loading="lazy">
+          <span class="dot" style="left:50.1%;top:36.5%">1</span>
+          <span class="dot" style="left:62.6%;top:49.1%">2</span>
+          <span class="dot" style="left:49.5%;top:71.8%">3</span>
+        </div>
+      </div>
+      <div class="f-text reveal">
+        <span class="eyebrow">Ngân sách</span>
+        <h3 class="f-title">Tháng tới cần bao nhiêu?</h3>
+        <ul class="points">
+          <li><i class="n">1</i><b>Tháng, quý, năm chia về từng tháng</b></li>
+          <li><i class="n">2</i><b>Nhập khoảng: ăn uống 3–5 triệu</b></li>
+          <li><i class="n">3</i><b>Thanh tiến độ: 80% vàng, 100% đỏ</b></li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="feature">
+      <div class="f-media reveal">
+        <div class="device">
+          <img src="img/E10-03.webp" alt="Chia tiền bill cho 2 người" loading="lazy">
+          <span class="dot" style="left:49.2%;top:21.6%">1</span>
+          <span class="dot" style="left:80.7%;top:64.2%">2</span>
+          <span class="dot" style="left:28.2%;top:72.8%">3</span>
+        </div>
+      </div>
+      <div class="f-text reveal">
+        <span class="eyebrow">Chia bill</span>
+        <h3 class="f-title">Trả trước, app nhớ ai nợ</h3>
+        <ul class="points">
+          <li><i class="n">1</i><b>Chia đều, theo % hoặc cố định</b></li>
+          <li><i class="n">2</i><b>Làm tròn lên 1.000 đ</b></li>
+          <li><i class="n">3</i><b>Gắn sự kiện, gửi link sổ nợ</b></li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="feature">
+      <div class="f-media reveal">
+        <div class="device">
+          <img src="img/E12-02.webp" alt="Quỹ Vàng DCA: giá trị hiện tại và lãi chưa chốt" loading="lazy">
+          <span class="dot" style="left:63.5%;top:29.6%">1</span>
+          <span class="dot" style="left:79.2%;top:53.5%">2</span>
+          <span class="dot" style="left:54.7%;top:64.7%">3</span>
+        </div>
+      </div>
+      <div class="f-text reveal">
+        <span class="eyebrow">Vàng & tiền số</span>
+        <h3 class="f-title">Biết ngay đang lãi bao nhiêu</h3>
+        <ul class="points">
+          <li><i class="n">1</i><b>Lãi lỗ theo giá vốn bình quân</b></li>
+          <li><i class="n">2</i><b>Mua, bán, được tặng, điều chỉnh</b></li>
+          <li><i class="n">3</i><b>Giá vàng, coin tự cập nhật</b></li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="section" id="them">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center">
+      <span class="eyebrow">Và còn nữa</span>
+      <h2>Chi tiết nhỏ, đỡ việc lớn</h2>
+    </div>
+    <div class="bento">
+      <div class="tile wide reveal">
+        <h3>👆 Chạm 2 lần mặt lưng iPhone</h3>
+        <p>Lưu giờ, vị trí. Ghi sau.</p>
+        <div class="shot bottom"><img src="img/E16-01.webp" alt="Hộp thoại: bạn có 2 giao dịch chưa ghi" loading="lazy"></div>
+      </div>
+      <div class="tile reveal">
+        <h3>📶 Mất mạng vẫn ghi</h3>
+        <p>Có mạng tự gửi, không trùng.</p>
+        <div class="shot"><img src="img/E21-02.webp" alt="Giao dịch chờ gửi khi mất mạng" loading="lazy"></div>
+      </div>
+      <div class="tile reveal">
+        <h3>🔁 Định kỳ</h3>
+        <p>Đến kỳ app tự ghi.</p>
+        <div class="shot"><img src="img/E13-01.webp" alt="Đặt lặp lại hằng tháng" loading="lazy"></div>
+      </div>
+      <div class="tile reveal">
+        <h3>📍 Tự gắn địa điểm</h3>
+        <p>Trừ nhà và công ty.</p>
+        <div class="shot"><img src="img/E17-01.webp" alt="Giao dịch tự gắn vị trí" loading="lazy"></div>
+      </div>
+      <div class="tile reveal">
+        <h3>💳 Thẻ tín dụng</h3>
+        <p>Kỳ sao kê, số cần trả.</p>
+        <div class="shot"><img src="img/E11-02.webp" alt="Chi tiết thẻ tín dụng" loading="lazy"></div>
+      </div>
+      <div class="tile wide reveal">
+        <h3>🔗 Link công khai cho quỹ</h3>
+        <p>Cả đội tự xem thu chi, không cần tài khoản.</p>
+        <div class="shot"><img src="img/E18-04.webp" alt="Trang công khai giao dịch của quỹ" loading="lazy"></div>
+      </div>
+    </div>
+    <ul class="mini reveal">
+      <li>Nhiều ví, mời người cùng quản lý</li>
+      <li>Ẩn ví sau Face ID / PIN</li>
+      <li>Nhắc nhở cả ví</li>
+      <li>Tìm không cần dấu</li>
+      <li>Xuất / nhập Excel</li>
+      <li>Theo dõi tiền chờ hoàn ứng</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="cong-nghe" style="padding-top:20px">
+  <div class="wrap">
+    <div class="tech reveal">
+      <span class="eyebrow">Phía sau</span>
+      <h2>Đúng từng đồng</h2>
+      <div class="logos">
+        <span class="logo"><img class="dark-invert" src="icons/nextdotjs.svg" alt="">Next.js</span>
+        <span class="logo"><img src="icons/postgresql.svg" alt="">PostgreSQL</span>
+        <span class="logo"><img src="icons/neon.svg" alt="">Neon</span>
+        <span class="logo"><img class="dark-invert" src="icons/vercel.svg" alt="">Vercel</span>
+        <span class="logo"><img src="icons/firebase.svg" alt="">Firebase</span>
+        <span class="logo"><img src="icons/cronjob.png" alt="">cron-job.org</span>
+        <span class="logo"><img src="icons/googlemaps.svg" alt="">Google Maps</span>
+        <span class="logo"><img src="icons/binance.svg" alt="">Binance</span>
+        <span class="logo"><img src="icons/vangtoday.svg" alt="">vang.today</span>
+      </div>
+      <div class="decisions">
+        <div class="decision"><b>💯 Số nguyên VND</b><span>Không số thực, kể cả phép chia.</span></div>
+        <div class="decision"><b>🧮 Số dư luôn tính lại</b><span>Sửa giao dịch cũ, cả sổ tự đúng.</span></div>
+        <div class="decision"><b>🛡️ Quy tắc trong database</b><span>Chuyển tiền phải cân, vay nợ phải có người.</span></div>
+        <div class="decision"><b>🔒 Row Level Security</b><span>Dữ liệu tách theo người, theo ví.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="demo">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center;max-width:760px;margin:0 auto">
+      <span class="eyebrow">Video demo</span>
+    </div>
+    <div class="demo-main reveal">
+      <div class="demo-frame" id="demo-frame"></div>
+      <div class="demo-now"><b id="demo-title">Tổng quan: từ Google Sheets, ghi tay sang một app</b><span id="demo-dur" class="muted"></span></div>
+    </div>
+    <div class="demo-list reveal" role="list">
+      <!-- data-yt: YouTube video ID (the part after watch?v=). Empty = "coming soon". -->
+      <button class="demo-item" type="button" role="listitem" aria-current="true" data-yt="4laGfSAiuFE" data-poster="video/v1.jpg" data-title="Tổng quan: từ Google Sheets, ghi tay sang một app" data-dur="1:17">
+        <img src="video/v1.jpg" alt="" loading="lazy"><span>1. Tổng quan: từ Google Sheets, ghi tay sang một app<small>1:17</small></span>
+      </button>
+      <button class="demo-item" type="button" role="listitem" aria-current="false" data-yt="wmMERMEAEMQ" data-poster="video/v2.jpg" data-title="Ghi chép trong 5 giây" data-dur="1:14">
+        <img src="video/v2.jpg" alt="" loading="lazy"><span>2. Ghi chép trong 5 giây<small>1:14</small></span>
+      </button>
+      <button class="demo-item" type="button" role="listitem" aria-current="false" data-yt="cClNTjL1Aig" data-poster="video/v3.jpg" data-title="Một tài khoản, nhiều quỹ và đối soát" data-dur="0:58">
+        <img src="video/v3.jpg" alt="" loading="lazy"><span>3. Một tài khoản, nhiều quỹ và đối soát<small>0:58</small></span>
+      </button>
+      <button class="demo-item" type="button" role="listitem" aria-current="false" data-yt="kXhpPAZwK5Q" data-poster="video/v4.jpg" data-title="Chia bill và công nợ" data-dur="0:47">
+        <img src="video/v4.jpg" alt="" loading="lazy"><span>4. Chia bill và công nợ<small>0:47</small></span>
+      </button>
+      <button class="demo-item" type="button" role="listitem" aria-current="false" data-yt="c0CIOzSrlsk" data-poster="video/v5.jpg" data-title="Ngân sách, định kỳ và đầu tư" data-dur="0:50">
+        <img src="video/v5.jpg" alt="" loading="lazy"><span>5. Ngân sách, định kỳ và đầu tư<small>0:50</small></span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<footer>MoneyTus · dự án cá nhân của <a href="/">tupt.dev</a> · Ảnh chụp từ app thật với dữ liệu mẫu</footer>
+
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Xem ảnh lớn"><img alt=""></div>
+
+<script>
+// Fade sections in as they scroll into view.
+(function () {
+  var els = document.querySelectorAll(".reveal");
+  if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
+  }, { rootMargin: "0px 0px -8% 0px" });
+  els.forEach(function (e) { io.observe(e); });
+})();
+// Demo videos (YouTube): show the poster first, load the player only when played.
+(function () {
+  var frame = document.getElementById("demo-frame"), title = document.getElementById("demo-title"), dur = document.getElementById("demo-dur");
+  var items = document.querySelectorAll(".demo-item");
+  function embed(id) {
+    var f = document.createElement("iframe");
+    f.src = "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) + "?autoplay=1&rel=0&playsinline=1";
+    f.title = title.textContent;
+    f.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+    f.allowFullscreen = true;
+    frame.replaceChildren(f);
+  }
+  function show(btn, autoplay) {
+    items.forEach(function (b) { b.setAttribute("aria-current", b === btn ? "true" : "false"); });
+    title.textContent = btn.dataset.title;
+    dur.textContent = btn.dataset.dur;
+    var id = btn.dataset.yt;
+    if (id && autoplay) return embed(id);
+    var poster = document.createElement("button");
+    poster.type = "button"; poster.className = "demo-poster";
+    poster.setAttribute("aria-label", id ? "Phát video: " + btn.dataset.title : btn.dataset.title + " (sắp có)");
+    var img = document.createElement("img"); img.src = btn.dataset.poster; img.alt = "";
+    var badge = document.createElement("span");
+    badge.className = id ? "demo-play" : "demo-soon";
+    badge.textContent = id ? "▶" : "Video sắp ra mắt";
+    poster.append(img, badge);
+    if (id) poster.addEventListener("click", function () { embed(id); });
+    frame.replaceChildren(poster);
+  }
+  items.forEach(function (btn) { btn.addEventListener("click", function () { show(btn, true); }); });
+  if (items[0]) show(items[0], false);
+})();
+// Tap a screenshot to see it full size.
+(function () {
+  var lb = document.getElementById("lb"), big = lb.querySelector("img");
+  document.querySelectorAll(".device img, .shot img").forEach(function (img) {
+    img.addEventListener("click", function () { big.src = img.src; big.alt = img.alt; lb.classList.add("open"); });
+  });
+  lb.addEventListener("click", function () { lb.classList.remove("open"); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") lb.classList.remove("open"); });
+})();
+</script>
+</body>
+</html>
