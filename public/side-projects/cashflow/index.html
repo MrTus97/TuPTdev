@@ -10,6 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://www.tupt.dev/side-projects/cashflow/img/og.png">
 <meta property="og:url" content="https://www.tupt.dev/side-projects/cashflow/">
+<script>if (window.self !== window.top) document.documentElement.classList.add('embedded')</script>
 <link rel="canonical" href="https://www.tupt.dev/side-projects/cashflow/">
 <meta name="theme-color" content="#0E9F6E">
 <link rel="icon" href="icons/app.svg" type="image/svg+xml">
@@ -176,6 +177,8 @@ code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; fo
 .demo-soon { position: relative; background: rgba(0,0,0,.66); color: #fff; font-weight: 600; font-size: 15px; padding: 8px 16px; border-radius: 999px; }
 .back-link { color: var(--ink-3); font-size: 14px; font-weight: 600; white-space: nowrap; }
 .back-link:hover { color: var(--ink); }
+/* Embedded in tupt.dev's editor tab (pages/side-projects/[slug].tsx): the IDE chrome navigates back */
+html.embedded .back-link { display: none; }
 .demo-now { display: flex; justify-content: space-between; gap: 12px; padding: 14px 10px 6px; font-size: 17px; }
 .demo-list { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 18px; }
 .demo-item { all: unset; cursor: pointer; background: var(--card); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow); display: flex; flex-direction: column; outline-offset: 3px; }
@@ -547,7 +550,7 @@ footer { padding: 28px 0 40px; color: var(--ink-3); font-size: 14px; text-align:
   </div>
 </section>
 
-<footer>MoneyTus · dự án cá nhân của <a href="/">tupt.dev</a> · Ảnh chụp từ app thật với dữ liệu mẫu</footer>
+<footer>MoneyTus · dự án cá nhân của <a href="/" target="_top">tupt.dev</a> · Ảnh chụp từ app thật với dữ liệu mẫu</footer>
 
 <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Xem ảnh lớn"><img alt=""></div>
 

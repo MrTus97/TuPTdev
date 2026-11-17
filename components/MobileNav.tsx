@@ -46,6 +46,8 @@ export function MobileNav({ navShow, onToggleNav }) {
               <a
                 key={project.slug}
                 href={sideProjectHref(project.slug)}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="block text-lg text-gray-700 dark:text-gray-300"
               >
                 {project.title}

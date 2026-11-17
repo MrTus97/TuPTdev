@@ -11,9 +11,9 @@ export let siteMetadata = {
   youtube: '#',
   linkedin: 'https://www.linkedin.com/in/tupt/',
   locale: 'vi',
-  analyticsURL: 'https://umami.tupt.dev/share/toCRym7jAFWa8Qwj/tupt.dev',
+  analyticsURL: 'https://umami.tupt.dev/share/UIchMLFpkQSThxc0',
   analytics: {
-    umamiWebsiteId: 'd101f2cd-91f5-4ca9-8a0c-f98420f170ab',
+    umamiWebsiteId: 'b5ea2759-f308-4dbe-ac50-cb57632be7bb',
   },
   socialAccounts: {
     github: 'MrTus97',

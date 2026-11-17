@@ -6,7 +6,7 @@ import { localized, sideProjectHref, sideProjects } from '~/data/sideProjectsDat
 import { Link } from './Link'
 import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from './ui/Popover'
 
-// Showcases are static HTML pages under public/, so they're opened with a plain <a>
+// Showcases are static HTML pages under public/, opened in a new tab with a plain <a>
 // (a Next.js <Link> would try to client-side route to a page that doesn't exist).
 export function SideProjectsMenu() {
   let { t } = useTranslation('common')
@@ -32,6 +32,8 @@ export function SideProjectsMenu() {
             <a
               key={project.slug}
               href={sideProjectHref(project.slug)}
+              target="_blank"
+              rel="noopener noreferrer"
               className="block rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
               data-umami-event={`nav-side-project-${project.slug}`}
             >

@@ -57,17 +57,12 @@ export function ToC({ toc }: { toc: TOC[] }) {
 
   let handleLinkClick = (e: MouseEvent, url: string) => {
     e.preventDefault()
-    let targetElement: HTMLElement = document.querySelector(url)
-    if (targetElement) {
-      window.scrollTo({
-        top: targetElement.offsetTop - 80,
-        behavior: 'smooth',
-      })
-    }
+    // scrollIntoView works for the window and for the IDE's editor scroll container alike
+    document.querySelector<HTMLElement>(url)?.scrollIntoView({ behavior: 'smooth' })
   }
 
   return (
-    <nav ref={navRef} className="pl-0 md:sticky top-24 self-start">
+    <nav ref={navRef} className="pl-0 md:sticky top-4 self-start">
       <ul className="list-none space-y-1.5">
         {toc.map((item, index) => (
           <li key={index}>

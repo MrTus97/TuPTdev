@@ -1,0 +1,142 @@
+{
+  "en": {
+    "blog": [
+      {
+        "slug": "how-video-system-work",
+        "fileName": "how-video-system-work.mdx",
+        "title": "How to Create a Video Streaming System Using HLS",
+        "date": "2024-08-06",
+        "summary": "Let's Explore How to Create a Video Upload and Streaming System Using HLS",
+        "tags": ["howto", "video-system", "mini-project", "feature"]
+      },
+      {
+        "slug": "set-up-email-service-in-lark",
+        "fileName": "set-up-email-service-in-lark.mdx",
+        "title": "Set up email service in Lark",
+        "date": "2024-08-07",
+        "summary": "How to set up email service in Lark free",
+        "tags": ["howto", "lark", "service"]
+      },
+      {
+        "slug": "the-software-i-always-install-on-my-computer",
+        "fileName": "the-software-i-always-install-on-my-computer.mdx",
+        "title": "Essential software on my computer",
+        "date": "2024-07-16",
+        "summary": "I'm someone who often tinkers around, so reinstalling Windows is a regular thing for me. Here are the software that I always need whenever I use a computer for work.",
+        "tags": ["software"]
+      },
+      {
+        "slug": "traffic-analytics-tools-used-in-tupt.dev",
+        "fileName": "traffic-analytics-tools-used-in-tupt.dev.mdx",
+        "title": "Traffic analysis tools used at TuPT.dev",
+        "date": "2024-07-17",
+        "summary": "Here is an introduction to the traffic analysis websites used on the website tupt.dev.",
+        "tags": ["software", "tool"]
+      },
+      {
+        "slug": "unlocking-the-secrets-of-password-encryption",
+        "fileName": "unlocking-the-secrets-of-password-encryption.mdx",
+        "title": "Unlocking the Secrets of Password Encryption",
+        "date": "2024-07-18",
+        "summary": "Resolve the issue of how to find accounts using default passwords in the system.",
+        "tags": ["security", "issue", "PHP"]
+      }
+    ],
+    "snippets": [
+      {
+        "slug": "clipboard-to-virtualbox",
+        "fileName": "clipboard-to-virtualbox.mdx",
+        "title": "Paste clipboard into virtualbox",
+        "date": "2024-07-22",
+        "summary": "Copy/paste clipboard into virtualbox and vice versa",
+        "tags": ["virtualbox", "clipboard", "setting"]
+      },
+      {
+        "slug": "commonly-used-command",
+        "fileName": "commonly-used-command.mdx",
+        "title": "Commonly used command",
+        "date": "2024-07-12",
+        "summary": "Commands that I often use",
+        "tags": ["command", "git", "ssh", "policy"]
+      },
+      {
+        "slug": "windows-tricks-tips",
+        "fileName": "windows-tricks-tips.mdx",
+        "title": "All snippets in windows",
+        "date": "2024-07-12",
+        "summary": "Some tip/trick in windows",
+        "tags": ["windows", "registry"]
+      }
+    ]
+  },
+  "vi": {
+    "blog": [
+      {
+        "slug": "how-video-system-work",
+        "fileName": "how-video-system-work.mdx",
+        "title": "Cách tạo ra một hệ thống phát video sử dụng HLS",
+        "date": "2024-08-06",
+        "summary": "Cùng tìm hiểu cách tạo ra hệ thống upload và phát video dưới dạng HLS",
+        "tags": ["howto", "video-system", "mini-project", "feature"]
+      },
+      {
+        "slug": "set-up-email-service-in-lark",
+        "fileName": "set-up-email-service-in-lark.mdx",
+        "title": "Cài đặt email service với Lark",
+        "date": "2024-08-07",
+        "summary": "Hướng dẫn cài đặt email service miễn phí bằng Lark",
+        "tags": ["howto", "lark", "service"]
+      },
+      {
+        "slug": "the-software-i-always-install-on-my-computer",
+        "fileName": "the-software-i-always-install-on-my-computer.mdx",
+        "title": "Những phần mềm mình luôn cài trên máy tính",
+        "date": "2024-07-16",
+        "summary": "Mình là người hay vọc vạch phá phách nên chuyện cài lại win là chuyện bình thường. Sau đây là những phần mềm mà lúc nào khi sử dụng một máy tính để làm việc thì mình luôn cần sử dụng đến nó",
+        "tags": ["software"]
+      },
+      {
+        "slug": "traffic-analytics-tools-used-in-tupt.dev",
+        "fileName": "traffic-analytics-tools-used-in-tupt.dev.mdx",
+        "title": "Các tool phân tích lưu lượng truy cập được sử dụng tại TuPT.dev",
+        "date": "2024-07-17",
+        "summary": "Sau đây mình xin giới thiệu các website phân tích lưu lượng được sử dụng trong website tupt.dev",
+        "tags": ["software", "tool"]
+      },
+      {
+        "slug": "unlocking-the-secrets-of-password-encryption",
+        "fileName": "unlocking-the-secrets-of-password-encryption.mdx",
+        "title": "Khám Phá Bí Mật của Mã Hóa Mật Khẩu",
+        "date": "2024-07-18",
+        "summary": "Làm thế nào để tìm account nào đang sử dụng password mặc định trong hệ thống",
+        "tags": ["security", "issue", "PHP"]
+      }
+    ],
+    "snippets": [
+      {
+        "slug": "clipboard-to-virtualbox",
+        "fileName": "clipboard-to-virtualbox.mdx",
+        "title": "Paste clipboard into virtualbox",
+        "date": "2024-07-22",
+        "summary": "Copy/paste clipboard vào virtualbox và ngược lại",
+        "tags": ["virtualbox", "clipboard", "setting"]
+      },
+      {
+        "slug": "commonly-used-command",
+        "fileName": "commonly-used-command.mdx",
+        "title": "Những command hay được sử dụng",
+        "date": "2024-07-12",
+        "summary": "Những command mà TuPT hay dùng",
+        "tags": ["command", "git", "ssh", "policy"]
+      },
+      {
+        "slug": "windows-tricks-tips",
+        "fileName": "windows-tricks-tips.mdx",
+        "title": "Snippets ở windows",
+        "date": "2024-07-12",
+        "summary": "Một vài tip/trick của windows",
+        "tags": ["windows", "registry"]
+      }
+    ]
+  }
+}

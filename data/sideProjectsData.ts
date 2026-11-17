@@ -1,10 +1,11 @@
 /**
- * Side projects shown in the header "Side projects" menu and on /side-projects.
+ * Side projects shown in the explorer, the Extensions view and on /side-projects.
  *
  * Each project's showcase is a self-contained static page in
- * `public/side-projects/<slug>/index.html` (with its own img/, icons/ ... next to it),
- * served at `/side-projects/<slug>/` through the rewrite in next.config.js.
- * To add a project: drop its folder into public/side-projects/ and add an entry here.
+ * `public/side-projects/<slug>/index.html` (with its own img/, icons/ ... next to it).
+ * The route `/side-projects/<slug>/` (pages/side-projects/[slug].tsx) shows it inside an editor
+ * tab through an iframe. To add a project: drop its folder into public/side-projects/ and add
+ * an entry here.
  */
 export type LocalizedText = { en: string; vi: string }
 
@@ -36,6 +37,11 @@ export let sideProjects: SideProject[] = [
 
 export function sideProjectHref(slug: string) {
   return `/side-projects/${slug}/`
+}
+
+/** The static showcase file; loading index.html directly makes its relative asset paths resolve. */
+export function sideProjectShowcaseSrc(slug: string) {
+  return `/side-projects/${slug}/index.html`
 }
 
 export function localized(text: LocalizedText, locale?: string) {
