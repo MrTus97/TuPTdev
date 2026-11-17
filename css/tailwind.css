@@ -123,8 +123,18 @@
   @apply rounded-t bg-gray-700 px-5 py-3 font-mono text-sm font-bold text-gray-200;
 }
 
-.remark-code-title + div > pre {
+.remark-code-title + .code-block {
+  margin-top: 0;
+}
+.remark-code-title + .code-block pre {
   @apply mt-0 rounded-t-none pl-4;
+}
+
+/* "Wrap lines" in any code block wraps all of them (hooks/useCodeWrap.ts) */
+.code-wrap pre,
+.code-wrap pre code {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 .code-line {

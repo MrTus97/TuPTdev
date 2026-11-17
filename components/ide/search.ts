@@ -164,6 +164,14 @@ export function revealMatch(target: MatchTarget): boolean {
   }
   let a = locate(from, false)
   let b = locate(to, true)
+  // A match inside a folded code block (components/Pre.tsx) is hidden: unfold it, and let the
+  // caller retry once it has re-rendered
+  let folded = a.node.parentElement?.closest('[data-code-folded]')
+  if (folded) {
+    folded.querySelector<HTMLButtonElement>('[data-code-expand]')?.click()
+    return false
+  }
+
   let range = document.createRange()
   range.setStart(a.node, a.offset)
   range.setEnd(b.node, b.offset)

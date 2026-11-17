@@ -95,5 +95,12 @@
     "description": "Những thứ tôi làm ngoài giờ — mỗi dự án có trang giới thiệu và video demo.",
     "view": "Xem giới thiệu",
     "all": "Tất cả side project"
+  },
+  "code": {
+    "copy": "Sao chép code",
+    "copied": "Đã sao chép",
+    "wrap": "Tự xuống dòng",
+    "show_more": "Xem thêm {{count}} dòng",
+    "show_less": "Thu gọn"
   }
 }
