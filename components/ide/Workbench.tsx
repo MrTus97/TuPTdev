@@ -11,6 +11,7 @@ import {
 } from 'react'
 import { normalizePath } from './files'
 import { getEditorScroller, scrollEditorTo } from './scroll'
+import { clearSearchHighlight } from './search'
 
 export type SideView = 'explorer' | 'search' | 'extensions'
 
@@ -102,6 +103,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       normalizePath(url.replace(new RegExp(`^/(${(router.locales || []).join('|')})(?=/)`), ''))
     let onStart = (url: string) => {
       scrollByPath.current[normalizePath(router.asPath)] = getEditorScroller()?.scrollTop || 0
+      clearSearchHighlight() // a revealed search match belongs to the page being left
       // Like VS Code, the tab opens right away and shows progress until the page is rendered
       let path = stripLocale(url)
       if (path === normalizePath(router.asPath)) return // locale switch / same page
@@ -253,6 +255,7 @@ export function WorkbenchProvider({ children }: { children: ReactNode }) {
       tabs,
       activePath,
       pendingPath,
+      focusedPath,
       openTab,
       closeTab,
       closeOthers,
