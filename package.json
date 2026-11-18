@@ -2,16 +2,16 @@
   "private": true,
   "scripts": {
     "start": "next-remote-watch ./data",
-    "dev": "npm run explorer && next dev",
+    "dev": "next dev",
     "postinstall": "prisma generate",
-    "build": "npm run explorer && next build && tsx ./scripts/generate-sitemap",
+    "build": "next build && tsx ./scripts/generate-sitemap",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir pages --dir components --dir lib --dir layouts --dir scripts --dir pages",
     "prepare": "husky install",
     "typecheck": "npx tsc -b",
     "upgrade": "rimraf package-lock.json && npx taze major -w && ni",
-    "explorer": "tsx ./scripts/generate-explorer.ts"
+    "explorer": "node ./scripts/generate-explorer.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",
