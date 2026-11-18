@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import { ChevronDown } from 'lucide-react'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
-import { localized, sideProjectHref, sideProjects } from '~/data/sideProjectsData'
+import { localized, sideProjectShowcaseSrc, sideProjects } from '~/data/sideProjectsData'
 import { Link } from './Link'
 import { Popover, PopoverClose, PopoverContent, PopoverTrigger } from './ui/Popover'
 
@@ -31,7 +31,7 @@ export function SideProjectsMenu() {
           {sideProjects.map((project) => (
             <a
               key={project.slug}
-              href={sideProjectHref(project.slug)}
+              href={sideProjectShowcaseSrc(project.slug)}
               target="_blank"
               rel="noopener noreferrer"
               className="block rounded px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"

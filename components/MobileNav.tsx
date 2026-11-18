@@ -1,5 +1,5 @@
 import { headerNavLinks } from '~/data/headerNavLinks'
-import { sideProjectHref, sideProjects } from '~/data/sideProjectsData'
+import { sideProjectShowcaseSrc, sideProjects } from '~/data/sideProjectsData'
 import { Link } from './Link'
 import clsx from 'clsx'
 import { useTranslation } from 'next-i18next'
@@ -45,7 +45,7 @@ export function MobileNav({ navShow, onToggleNav }) {
             {sideProjects.map((project) => (
               <a
                 key={project.slug}
-                href={sideProjectHref(project.slug)}
+                href={sideProjectShowcaseSrc(project.slug)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block text-lg text-gray-700 dark:text-gray-300"

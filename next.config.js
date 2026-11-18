@@ -3,8 +3,20 @@ let withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 })
 let { i18n } = require('./next-i18next.config')
+let { PHASE_DEVELOPMENT_SERVER, PHASE_PRODUCTION_BUILD } = require('next/constants')
+let { generateExplorerIndexes } = require('./scripts/generate-explorer')
 
-module.exports = withBundleAnalyzer({
+module.exports = (phase) => {
+  // The dev interface's explorer and search indexes (data/explorer.json, public/search-index/)
+  // are generated here rather than in an npm script, so they exist whatever build command the
+  // host runs. Not at `next start`: the server's filesystem may be read-only.
+  if (phase === PHASE_PRODUCTION_BUILD || phase === PHASE_DEVELOPMENT_SERVER) {
+    generateExplorerIndexes(__dirname)
+  }
+  return nextConfig
+}
+
+let nextConfig = withBundleAnalyzer({
   reactStrictMode: true,
   pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   eslint: {

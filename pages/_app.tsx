@@ -10,6 +10,7 @@ import Script from 'next/script'
 import { Analytics } from '~/components/analytics'
 import { LayoutWrapper } from '~/components/LayoutWrapper'
 import { SearchProvider } from '~/components/search/SearchProvider'
+import { UiModeProvider } from '~/components/UiMode'
 
 function App({ Component, pageProps, router }) {
   let isAdmin = router.pathname.startsWith('/admin')
@@ -36,9 +37,11 @@ function App({ Component, pageProps, router }) {
           // Remount when switching between posts and snippets so editor state never leaks across
           <Component key={`${router.pathname}:${router.query.kind ?? 'blog'}`} {...pageProps} />
         ) : (
-          <LayoutWrapper>
-            <Component {...pageProps} />
-          </LayoutWrapper>
+          <UiModeProvider>
+            <LayoutWrapper>
+              <Component {...pageProps} />
+            </LayoutWrapper>
+          </UiModeProvider>
         )}
       </SearchProvider>
     </ThemeProvider>

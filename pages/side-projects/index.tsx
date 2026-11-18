@@ -1,9 +1,9 @@
 import { PageSeo } from 'components/SEO'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import NextLink from 'next/link'
 import { useRouter } from 'next/router'
-import { localized, sideProjectHref, sideProjects } from '~/data/sideProjectsData'
+import { SideProjectLink } from '~/components/SideProjectLink'
+import { localized, sideProjects } from '~/data/sideProjectsData'
 
 export async function getStaticProps({ locale }) {
   return {
@@ -38,12 +38,10 @@ export default function SideProjects() {
         <div className="container py-12">
           <div className="-m-4 flex flex-wrap">
             {sideProjects.map((project) => {
-              let href = sideProjectHref(project.slug)
               return (
                 <div key={project.slug} className="p-4 md:w-1/2" style={{ maxWidth: '544px' }}>
-                  {/* Opens the showcase in an editor tab (pages/side-projects/[slug].tsx) */}
-                  <NextLink
-                    href={href}
+                  <SideProjectLink
+                    slug={project.slug}
                     className="group flex h-full flex-col overflow-hidden rounded-lg shadow-nextjs dark:shadow-nextjs-dark"
                     data-umami-event={`side-project-${project.slug}`}
                   >
@@ -84,7 +82,7 @@ export default function SideProjects() {
                         {t('side_projects.view')} &rarr;
                       </span>
                     </div>
-                  </NextLink>
+                  </SideProjectLink>
                 </div>
               )
             })}

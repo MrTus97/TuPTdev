@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import { useRouter } from 'next/router'
-import type { ReactNode } from 'react'
+import { useEffect, type ReactNode } from 'react'
+import { revealUi } from '~/components/UiMode'
 import { Footer } from '~/components/Footer'
 import { ActivityBar, StatusBar, TitleBar } from './Chrome'
 import { Breadcrumbs, EditorTabs } from './EditorTabs'
@@ -35,6 +36,7 @@ export function IdeShell({ children }: { children: ReactNode }) {
 const FULL_BLEED_ROUTES = ['/side-projects/[slug]']
 
 function Workbench({ children }: { children: ReactNode }) {
+  useEffect(revealUi, [])
   let { pathname } = useRouter()
   let { sideView, sidebarOpen, drawerOpen, closeDrawer, pendingPath } = useWorkbench()
   let fullBleed = FULL_BLEED_ROUTES.includes(pathname)

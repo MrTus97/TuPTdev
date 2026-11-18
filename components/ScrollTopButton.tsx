@@ -2,10 +2,12 @@ import clsx from 'clsx'
 import { useEffect, useRef, useState } from 'react'
 import smoothscroll from 'smoothscroll-polyfill'
 import { getEditorScroller } from './ide/scroll'
+import { useUiMode } from './UiMode'
 
 const FLY_DURATION = 1100
 
 export function ScrollTopButton() {
+  let { mode } = useUiMode()
   let [show, setShow] = useState(false)
   let [flying, setFlying] = useState(false)
   let timer = useRef<ReturnType<typeof setTimeout>>()
@@ -38,7 +40,10 @@ export function ScrollTopButton() {
       type="button"
       onClick={handleClick}
       className={clsx(
-        'doraemon-top fixed bottom-8 right-3 z-40 md:bottom-10 md:right-6 lg:right-[124px]',
+        'doraemon-top fixed z-40',
+        mode === 'dev'
+          ? 'bottom-8 right-3 md:bottom-10 md:right-6 lg:right-[124px]' // status bar, minimap
+          : 'bottom-4 right-3 md:bottom-6 md:right-6',
         flying && 'is-flying',
         show || flying ? 'opacity-100' : 'pointer-events-none opacity-0'
       )}

@@ -1,48 +1,30 @@
 /**
- * Build the indexes that power the VS Code-style workbench:
+ * Build the indexes that power the VS Code-style ("dev") interface:
  *
  * - `data/explorer.json`: frontmatter of every post/snippet, for the explorer tree and quick open.
  *   Every page needs it, but each page only gets its own getStaticProps data, so it's imported
- *   by the client bundle (small: no post bodies).
+ *   by the client bundle (small: no post bodies). Committed.
  * - `public/search-index/<locale>.json`: the plain text of every post/snippet (and the resume),
  *   line by line, for the full-text Search view. Fetched only when the Search view is used.
+ *   Generated, not committed.
  *
- * Runs before `next dev` and `next build`; posts saved from the admin CMS become a commit, which
- * triggers a rebuild, which regenerates both.
+ * Plain CommonJS so next.config.js can run it at the start of every `next build` / `next dev`,
+ * whatever build command the host uses (posts saved from the admin CMS become a commit, which
+ * triggers a rebuild, which regenerates both). Also runnable on its own: `npm run explorer`.
  */
-import fs from 'fs'
-import matter from 'gray-matter'
-import path from 'path'
+const fs = require('fs')
+const matter = require('gray-matter')
+const path = require('path')
 
-let ROOT = process.cwd()
-let DATA_DIR = path.join(ROOT, 'data')
-let OUT_FILE = path.join(DATA_DIR, 'explorer.json')
-let SEARCH_DIR = path.join(ROOT, 'public', 'search-index')
-let SECTIONS = ['blog', 'snippets'] as const
-
-interface ExplorerEntry {
-  slug: string
-  fileName: string
-  title: string
-  date: string
-  summary: string
-  tags: string[]
-}
-
-interface SearchDocument {
-  path: string // route, e.g. /blog/my-post/
-  file: string // workspace path shown in results, e.g. blog/my-post.mdx
-  title: string
-  lines: string[]
-}
+const SECTIONS = ['blog', 'snippets']
 
 /**
  * MDX source → the lines a reader sees: frontmatter, imports, JSX components, markdown syntax,
  * image/link targets and table pipes are dropped; code blocks are kept (they're searchable in
  * VS Code too).
  */
-export function toPlainLines(content: string): string[] {
-  let lines: string[] = []
+function toPlainLines(content) {
+  let lines = []
   let inFence = false
   let inJsx = false
   for (let raw of content.split(/\r?\n/)) {
@@ -81,11 +63,11 @@ export function toPlainLines(content: string): string[] {
   return lines
 }
 
-function readSection(locale: string, section: string) {
-  let dir = path.join(DATA_DIR, locale, section)
+function readSection(dataDir, locale, section) {
+  let dir = path.join(dataDir, locale, section)
   if (!fs.existsSync(dir)) return { entries: [], docs: [] }
-  let entries: ExplorerEntry[] = []
-  let docs: SearchDocument[] = []
+  let entries = []
+  let docs = []
   for (let fileName of fs.readdirSync(dir)) {
     if (!/\.mdx?$/.test(fileName)) continue
     let { data, content } = matter(fs.readFileSync(path.join(dir, fileName), 'utf8'))
@@ -110,37 +92,47 @@ function readSection(locale: string, section: string) {
     })
   }
   // Same order as VS Code's explorer: case-insensitive by file name
-  let byName = (a: string, b: string) => a.localeCompare(b, 'en', { sensitivity: 'base' })
+  let byName = (a, b) => a.localeCompare(b, 'en', { sensitivity: 'base' })
   entries.sort((a, b) => byName(a.fileName, b.fileName))
   docs.sort((a, b) => byName(a.file, b.file))
   return { entries, docs }
 }
 
-function readResume(locale: string): SearchDocument[] {
-  let file = path.join(DATA_DIR, locale, 'authors', 'resume.mdx')
+function readResume(dataDir, locale) {
+  let file = path.join(dataDir, locale, 'authors', 'resume.mdx')
   if (!fs.existsSync(file)) return []
   let { data, content } = matter(fs.readFileSync(file, 'utf8'))
   let title = String(data.title ?? 'Resume')
   return [{ path: '/resume/', file: 'resume.md', title, lines: [title, ...toPlainLines(content)] }]
 }
 
-function writeIfChanged(file: string, text: string) {
+function writeIfChanged(file, text) {
   if (!fs.existsSync(file) || fs.readFileSync(file, 'utf8') !== text) fs.writeFileSync(file, text)
 }
 
-let locales: Record<string, Record<string, ExplorerEntry[]>> = {}
-fs.mkdirSync(SEARCH_DIR, { recursive: true })
-for (let locale of fs.readdirSync(DATA_DIR)) {
-  if (!fs.statSync(path.join(DATA_DIR, locale)).isDirectory()) continue
-  if (!SECTIONS.some((s) => fs.existsSync(path.join(DATA_DIR, locale, s)))) continue
-  let sections = SECTIONS.map((s) => [s, readSection(locale, s)] as const)
-  locales[locale] = Object.fromEntries(sections.map(([s, r]) => [s, r.entries]))
-  let docs = [...sections.flatMap(([, r]) => r.docs), ...readResume(locale)]
-  writeIfChanged(path.join(SEARCH_DIR, `${locale}.json`), JSON.stringify(docs))
+function generateExplorerIndexes(root = process.cwd()) {
+  let dataDir = path.join(root, 'data')
+  let searchDir = path.join(root, 'public', 'search-index')
+  let locales = {}
+  fs.mkdirSync(searchDir, { recursive: true })
+  for (let locale of fs.readdirSync(dataDir)) {
+    if (!fs.statSync(path.join(dataDir, locale)).isDirectory()) continue
+    if (!SECTIONS.some((s) => fs.existsSync(path.join(dataDir, locale, s)))) continue
+    let sections = SECTIONS.map((s) => [s, readSection(dataDir, locale, s)])
+    locales[locale] = Object.fromEntries(sections.map(([s, r]) => [s, r.entries]))
+    let docs = [...sections.flatMap(([, r]) => r.docs), ...readResume(dataDir, locale)]
+    writeIfChanged(path.join(searchDir, `${locale}.json`), JSON.stringify(docs))
+  }
+  writeIfChanged(path.join(dataDir, 'explorer.json'), JSON.stringify(locales, null, 2) + '\n')
+  return Object.keys(locales)
 }
 
-writeIfChanged(OUT_FILE, JSON.stringify(locales, null, 2) + '\n')
-console.log(
-  `Explorer and search indexes generated for ${Object.keys(locales).join(', ')} ` +
-    '(`data/explorer.json`, `public/search-index/`).'
-)
+module.exports = { generateExplorerIndexes, toPlainLines }
+
+if (require.main === module) {
+  let locales = generateExplorerIndexes()
+  console.log(
+    `Explorer and search indexes generated for ${locales.join(', ')} ` +
+      '(`data/explorer.json`, `public/search-index/`).'
+  )
+}
