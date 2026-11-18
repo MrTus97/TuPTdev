@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { useTranslation } from 'next-i18next'
 import NextImage from 'next/image'
 import { useRouter } from 'next/router'
+import { SquareTerminal } from 'lucide-react'
 import { headerNavLinks } from '~/data/headerNavLinks'
 import { AnalyticsLink } from './AnalyticsLink'
 import { LanguageSwitcher } from './LanguageSwitcher'
@@ -9,11 +10,13 @@ import { Link } from './Link'
 import { MobileNavToggle } from './MobileNavToggle'
 import { SideProjectsMenu } from './SideProjectsMenu'
 import { ThemeSwitcher } from './ThemeSwitcher'
+import { useUiMode } from './UiMode'
 // import SearchButton from './search/SearchButton'
 
 export function Header({ navShow, onToggleNav }: { onToggleNav: () => void; navShow: boolean }) {
   let { t } = useTranslation('common')
   let router = useRouter()
+  let { setMode } = useUiMode()
 
   return (
     <nav className="supports-backdrop-blur:bg-white/95 sticky top-0 z-50 overflow-hidden bg-white/75 py-3 backdrop-blur dark:bg-dark/75">
@@ -61,6 +64,16 @@ export function Header({ navShow, onToggleNav }: { onToggleNav: () => void; navS
           </div>
           <div className="flex items-center gap-1">
             {/* <SearchButton /> */}
+            <button
+              type="button"
+              aria-label={t('ui_mode.to_dev')}
+              title={t('ui_mode.to_dev')}
+              onClick={() => setMode('dev')}
+              className="rounded p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700"
+              data-umami-event="ui-mode-dev"
+            >
+              <SquareTerminal strokeWidth={1.5} size={20} />
+            </button>
             <AnalyticsLink />
             <ThemeSwitcher />
             <LanguageSwitcher />

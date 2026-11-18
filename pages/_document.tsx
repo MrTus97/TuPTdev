@@ -1,9 +1,12 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document'
+import { UI_MODE_BOOT_SCRIPT } from '~/components/UiMode'
 class MyDocument extends Document {
   render() {
     return (
       <Html lang={process.env.NEXT_PUBLIC_DEFAULT_LOCALE}>
         <Head>
+          {/* Before first paint: hide the page if the dev interface will replace it */}
+          <script dangerouslySetInnerHTML={{ __html: UI_MODE_BOOT_SCRIPT }} />
           <link rel="icon" href="/static/favicons/favicon.ico" sizes="48x48" />
           <link rel="icon" href="/static/favicons/favicon.svg" type="image/svg+xml" />
           <link rel="apple-touch-icon" href="/static/favicons/apple-touch-icon.png" />

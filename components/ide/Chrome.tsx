@@ -1,4 +1,5 @@
 import clsx from 'clsx'
+import { useTranslation } from 'next-i18next'
 import { useTheme } from 'next-themes'
 import NextImage from 'next/image'
 import NextLink from 'next/link'
@@ -11,6 +12,7 @@ import {
   GitBranch,
   Menu,
   MoonStar,
+  Newspaper,
   Search,
   Settings,
   ShieldCheck,
@@ -19,6 +21,7 @@ import {
   CircleX,
 } from 'lucide-react'
 import { useEffect, useState, type ReactNode } from 'react'
+import { useUiMode } from '~/components/UiMode'
 import { siteMetadata } from '~/data/siteMetadata'
 import { useLocale } from '~/hooks/useLocale'
 import { describePath } from './files'
@@ -109,6 +112,7 @@ export function TitleBar() {
         </button>
       </div>
       <div className="flex shrink-0 items-center gap-0.5">
+        <UserModeToggle />
         <ThemeToggle className="rounded p-1 hover:bg-vsc-hover" size={16} />
         <LocaleToggle className="rounded p-1 hover:bg-vsc-hover" />
       </div>
@@ -231,6 +235,23 @@ export function ActivityBar() {
         </ActivityButton>
       </div>
     </nav>
+  )
+}
+
+function UserModeToggle() {
+  let { t } = useTranslation('common')
+  let { setMode } = useUiMode()
+  return (
+    <button
+      type="button"
+      aria-label={t('ui_mode.to_user')}
+      title={t('ui_mode.to_user')}
+      onClick={() => setMode('user')}
+      className="rounded p-1 hover:bg-vsc-hover"
+      data-umami-event="ui-mode-user"
+    >
+      <Newspaper size={16} strokeWidth={1.5} />
+    </button>
   )
 }
 

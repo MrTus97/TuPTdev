@@ -79,7 +79,7 @@ module.exports = {
       colors: {
         primary: colors.indigo,
         gray: colors.gray,
-        dark: '#1e1e1e',
+        dark: '#22272e',
         // VS Code Dark+ / Light+ workbench colors, defined as CSS variables in css/tailwind.css
         vsc: {
           title: 'var(--vsc-title)',

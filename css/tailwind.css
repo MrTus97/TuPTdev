@@ -66,6 +66,12 @@
   --vsc-minimap-slider-hover: #64646459;
 }
 
+/* A visitor who chose the dev interface: hide the statically rendered user layout until the
+   workbench is mounted (components/UiMode.tsx) */
+html[data-ui-pending] #__next {
+  visibility: hidden;
+}
+
 /* The workbench is fixed-height: only the editor (#ide-scroll) and side bar panels scroll */
 #ide-scroll {
   scroll-behavior: smooth;

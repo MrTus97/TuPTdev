@@ -3,6 +3,7 @@ import { useTranslation } from 'next-i18next'
 import { ChevronDown, ChevronUp, ClipboardCheck, Copy, WrapText } from 'lucide-react'
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { setCodeWrap, useCodeWrap } from '~/hooks/useCodeWrap'
+import { useUiMode } from './UiMode'
 
 const VISIBLE_LINES = 15
 // Don't fold a block that would only hide a couple of lines
@@ -18,6 +19,7 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
 export function Pre({ children }: { children: React.ReactNode }) {
   let { t } = useTranslation('common')
   let wrap = useCodeWrap()
+  let { mode } = useUiMode()
   let root = useRef<HTMLDivElement>(null)
   let pre = useRef<HTMLPreElement>(null)
   let [copied, setCopied] = useState(false)
@@ -75,7 +77,12 @@ export function Pre({ children }: { children: React.ReactNode }) {
         {/* Toolbar: sticks to the top of the editor while the block scrolls by, so copy / wrap
             stay reachable anywhere in a long block. It keeps its full height (the pre is pulled
             up under it instead) so sticky positioning stops it at the block's end */}
-        <div className="pointer-events-none sticky top-2 z-10 flex h-12 justify-end p-2">
+        <div
+          className={clsx(
+            'pointer-events-none sticky z-10 flex h-12 justify-end p-2',
+            mode === 'dev' ? 'top-2' : 'top-[77px]' // user interface: below the 69px header
+          )}
+        >
           <div
             className={clsx(
               'pointer-events-auto flex items-center gap-1.5 transition-opacity',

@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import { useTheme } from 'next-themes'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useUiMode } from '~/components/UiMode'
 import { useLocale } from '~/hooks/useLocale'
 import { FileIcon } from './FileIcon'
 import { buildTree, describePath, flattenFiles, type FileKind } from './files'
@@ -36,6 +37,7 @@ export function QuickOpen() {
   let { quickOpen, setQuickOpen, tabs, closeTab, activePath, showView, toggleSidebar } =
     useWorkbench()
   let { resolvedTheme, setTheme } = useTheme()
+  let { setMode } = useUiMode()
   let [, localeCodes, updateLocale] = useLocale()
   let [query, setQuery] = useState('')
   let [selected, setSelected] = useState(0)
@@ -93,6 +95,11 @@ export function QuickOpen() {
     let isDark = resolvedTheme === 'dark'
     return [
       {
+        id: 'ui-mode',
+        label: 'View: Switch to the Classic (User) Interface',
+        run: () => setMode('user'),
+      },
+      {
         id: 'theme',
         label: `Preferences: Color Theme → ${isDark ? 'Light+' : 'Dark+'}`,
         run: () => setTheme(isDark ? 'light' : 'dark'),
@@ -141,6 +148,7 @@ export function QuickOpen() {
       },
     ].map((c) => ({ ...c, detail: '' }))
   }, [
+    setMode,
     resolvedTheme,
     setTheme,
     localeCodes,
