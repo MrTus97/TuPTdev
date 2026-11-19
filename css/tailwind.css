@@ -298,6 +298,21 @@ html.lightbox-loading * {
     margin: 0 -150px;
   }
 }
+/* Dev interface: the editor is narrower than the viewport (side bar, minimap), so only break out
+   into the editor's own padding (px-8 / lg:px-12 in components/ide/IdeShell.tsx), never past it */
+#ide-scroll .thumbnail-image {
+  margin: 0;
+}
+@media (min-width: 640px) {
+  #ide-scroll .thumbnail-image {
+    margin: 0 -20px;
+  }
+}
+@media (min-width: 1024px) {
+  #ide-scroll .thumbnail-image {
+    margin: 0 -40px;
+  }
+}
 
 /* Doraemon scroll-to-top button */
 .doraemon-top {
